@@ -5,7 +5,7 @@ import android.graphics.Rect;
 import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 
 /**
- * Created by Marshall Garey on 2/9/2016.
+ * Created by Marshall Garey
  * These objects have a position (x and y coordinates) in the universe/world.
  */
 public class PositionedObject extends VisibleObject {

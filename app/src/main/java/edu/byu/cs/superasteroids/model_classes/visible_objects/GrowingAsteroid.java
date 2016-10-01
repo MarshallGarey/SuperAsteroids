@@ -3,7 +3,7 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.AsteroidType;
 
 /**
- * Created by Marshall Garey on 2/9/2016.
+ * Created by Marshall Garey
  * Growing asteroids continuously get bigger until they reach the maximum size.
  */
 public class GrowingAsteroid extends Asteroid {

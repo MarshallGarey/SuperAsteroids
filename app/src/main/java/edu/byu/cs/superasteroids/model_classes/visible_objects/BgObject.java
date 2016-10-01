@@ -3,7 +3,7 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ImageObject;
 
 /**
- * Created by Marshall Garey on 2/9/2016.
+ * Created by Marshall Garey
  * Information about a background object in the game, such as nebulas, etc. These objects are
  * visible but do not move - they are decorations to make the game look cool.
  */

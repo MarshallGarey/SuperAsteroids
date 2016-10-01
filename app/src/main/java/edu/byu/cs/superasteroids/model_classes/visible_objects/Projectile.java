@@ -3,7 +3,7 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ProjectileType;
 
 /**
- * Created by Marshall Garey on 2/9/2016.
+ * Created by Marshall Garey
  * This class has information about the projectiles that the ship's cannon shoots.
  */
 public class Projectile extends MovingObject{

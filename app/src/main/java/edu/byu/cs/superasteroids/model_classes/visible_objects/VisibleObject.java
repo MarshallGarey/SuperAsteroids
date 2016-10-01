@@ -1,7 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
 /**
- * Created by Marshall Garey on 2/9/2016.
+ * Created by Marshall Garey
  * Visible objects are things that the user can see.
  */
 public class VisibleObject {

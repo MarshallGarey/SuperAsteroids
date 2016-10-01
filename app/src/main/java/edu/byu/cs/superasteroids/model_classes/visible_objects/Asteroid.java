@@ -3,7 +3,7 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.AsteroidType;
 
 /**
- * Created by Marshall Garey on 2/4/2016.
+ * Created by Marshall Garey
  * This class is a container for info about an asteroid and is a superclass for the various types
  * of asteroids.
  */

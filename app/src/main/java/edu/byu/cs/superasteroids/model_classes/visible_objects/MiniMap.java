@@ -1,7 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
 /**
- * Created by Marshall Garey on 2/9/2016.
+ * Created by Marshall Garey
  * The mini-map is always in the same place on the user's viewport. It has a red dot for every
  * asteroid and a green dot for the ship.
  */

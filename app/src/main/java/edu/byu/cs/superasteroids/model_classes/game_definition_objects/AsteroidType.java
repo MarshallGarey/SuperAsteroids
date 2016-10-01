@@ -4,7 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by Marshall Garey on 1/18/2016.
+ * Created by Marshall Garey
  * Contains information about the type of the asteroid.
  */
 public class AsteroidType extends ImageObject {

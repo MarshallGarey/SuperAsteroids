@@ -7,7 +7,7 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.MainBodyT
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.PowerCoreType;
 
 /**
- * Created by Marshall Garey on 2/9/2016.
+ * Created by Marshall Garey
  * The class has all the information about the ship that the player is flying.
  */
 public class Ship extends MovingObject {
