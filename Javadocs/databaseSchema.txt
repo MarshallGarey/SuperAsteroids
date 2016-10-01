@@ -1,0 +1,26 @@
+DROP TABLE IF EXISTS "AsteroidType"
+CREATE TABLE "AsteroidType" ("name" TEXT,"asteroidTypeImage" TEXT,"imageWidth" INTEGER,"imageHeight" INTEGER,"type" TEXT)
+
+DROP TABLE IF EXISTS "Cannon"
+CREATE TABLE "Cannon" ("attachPoint" TEXT,"emitPoint" TEXT,"cannonImage" TEXT,"imageWidth" INTEGER,"imageHeight" INTEGER,"attackImage" TEXT,"attackImageWidth$
+
+DROP TABLE IF EXISTS "Engine"
+CREATE TABLE "Engine" ("baseSpeed" INTEGER,"baseTurnRate" INTEGER,"attachPoint" TEXT,"engineImage" TEXT,"imageWidth" INTEGER,"imageHeight" INTEGER)
+
+DROP TABLE IF EXISTS "ExtraPart"
+CREATE TABLE "ExtraPart" ("attachPoint" TEXT,"extraPartImage" TEXT,"imageWidth" INTEGER,"imageHeight" INTEGER)
+
+DROP TABLE IF EXISTS "Level"
+CREATE TABLE "Level" ("levelNumber" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "title" TEXT, "hint" TEXT, "levelWidth" INTEGER, "levelHeight" INTEGER, "m$
+
+DROP TABLE IF EXISTS "LevelAsteroid"
+CREATE TABLE "LevelAsteroid" ("asteroidId" INTEGER PRIMARY KEY  NOT NULL ,"asteroidNumber" INTEGER, "levelNumber" INTEGER)
+
+DROP TABLE IF EXISTS "LevelObject"
+CREATE TABLE "LevelObject" ("objectId" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL , "position" TEXT, "scale" FLOAT, "levelNumber" INTEGER)
+
+DROP TABLE IF EXISTS "MainBody"
+CREATE TABLE "MainBody" ("cannonAttach" TEXT,"engineAttach" TEXT,"extraAttach" TEXT,"image" TEXT,"imageWidth" INTEGER,"imageHeight" INTEGER)
+
+DROP TABLE IF EXISTS "PowerCore"
+CREATE TABLE "PowerCore" ("cannonBoost" INTEGER,"engineBoost" INTEGER,"powerCoreImage" TEXT)
