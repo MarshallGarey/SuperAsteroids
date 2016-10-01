@@ -1,7 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
 /**
- * Created by Marshall Garey on 1/18/2016.
+ * Created by Marshall Garey
  * Information about the extra part for the ship. There is nothing new about the extra part
  * that is not in its super class AttachableShipPart.
  */

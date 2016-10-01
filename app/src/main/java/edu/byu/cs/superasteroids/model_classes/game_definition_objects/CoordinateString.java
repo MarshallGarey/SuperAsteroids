@@ -1,7 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
 /**
- * Created by Marshall Garey on 2/9/2016.
+ * Created by Marshall Garey
  * Contains an x and y coordinate separated by a comma, i.e. "123,456" x = 123 and y = 456
  */
 public class CoordinateString {

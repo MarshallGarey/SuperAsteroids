@@ -7,7 +7,7 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.Coordinat
 import static junit.framework.Assert.assertEquals;
 
 /**
- * Created by Marshall Garey on 3/4/2016.
+ * Created by Marshall Garey
  * JUnit tests for the CoordinateString class
  */
 public class CoordinateStringTests extends AndroidTestCase {

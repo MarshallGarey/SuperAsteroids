@@ -1,7 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
 /**
- * Created by Marshall Garey on 2/9/2016.
+ * Created by Marshall Garey
  * Contains information common to all ship parts. For now, this isn't anything new, so this
  * class merely inherits information from ImageObject.
  */

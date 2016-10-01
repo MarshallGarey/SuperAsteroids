@@ -1,7 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
 /**
- * Created by Marshall Garey on 2/9/2016.
+ * Created by Marshall Garey
  * Contains information about the type of projectile that corresponds to a specific type of cannon.
  */
 public class ProjectileType extends ImageObject {

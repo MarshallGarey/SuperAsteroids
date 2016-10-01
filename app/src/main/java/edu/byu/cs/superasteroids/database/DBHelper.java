@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Created by Marshall Garey on 1/30/2016.
+ * Created by Marshall Garey
  * Helper class for the database. Opens the database by creating all the database tables.
  * Required by Android.
  */

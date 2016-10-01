@@ -30,7 +30,7 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.MainBodyT
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.PowerCoreType;
 
 /**
- * Created by Marshall Garey on 2/9/2016.
+ * Created by Marshall Garey
  * The Database class uses the DBHelper (database helper) class to create the database tables.
  * The data importer will use the this class to populate the database. This class uses the DAO's to
  * populate the database.

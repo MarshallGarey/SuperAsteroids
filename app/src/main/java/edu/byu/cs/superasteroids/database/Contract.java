@@ -3,7 +3,7 @@ package edu.byu.cs.superasteroids.database;
 import android.provider.BaseColumns;
 
 /**
- * Created by Marshall Garey on 1/30/2016.
+ * Created by Marshall Garey
  * Defines the database.
  */
 public final class Contract {

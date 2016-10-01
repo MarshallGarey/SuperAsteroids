@@ -10,7 +10,7 @@ import edu.byu.cs.superasteroids.database.Contract;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.CannonType;
 
 /**
- * Created by Marshall Garey on 1/30/2016.
+ * Created by Marshall Garey
  * This class defines all methods that access the CannonType database table.
  * These are the typical methods: add, remove, update, and query
  */

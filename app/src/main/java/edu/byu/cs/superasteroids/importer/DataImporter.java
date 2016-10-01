@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import edu.byu.cs.superasteroids.database.Database;
 
 /**
- * Created by Marshall Garey on 2/11/2016.
+ * Created by Marshall Garey
  * Imports the game data from a JSON file.
  */
 public class DataImporter implements IGameDataImporter {

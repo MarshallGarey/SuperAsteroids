@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Created by Marshall Garey on 1/18/2016.
+ * Created by Marshall Garey
  * All the information about a level is stored in this class.
  */
 public class Level {

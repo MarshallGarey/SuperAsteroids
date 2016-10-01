@@ -7,7 +7,7 @@ import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.base.IView;
 
 /**
- * Created by Marshall Garey on 3/4/2016.
+ * Created by Marshall Garey
  * Controller for the MainMenuActivity
  */
 public class MainMenuController implements IMainMenuController {

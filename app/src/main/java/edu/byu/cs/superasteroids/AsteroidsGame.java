@@ -22,7 +22,7 @@ import edu.byu.cs.superasteroids.model_classes.visible_objects.Projectile;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Ship;
 
 /**
- * Created by Marshall Garey on 1/18/2016.
+ * Created by Marshall Garey
  * This is a container for all the information about game objects that we need in order to play
  * the game. It just contains lists of various game data and loads the model from the database.
  */

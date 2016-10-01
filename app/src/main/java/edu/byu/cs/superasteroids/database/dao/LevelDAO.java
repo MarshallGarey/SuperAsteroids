@@ -9,7 +9,7 @@ import edu.byu.cs.superasteroids.database.Contract;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.Level;
 
 /**
- * Created by Marshall Garey on 1/30/2016.
+ * Created by Marshall Garey
  * This class defines all methods that access the Level, LevelAsteroid, and LevelObject database
  * tables. The reason for defining methods for all three tables in this same class is that the
  * latter two objects are part of the Level model class. This does limit the flexibility of
