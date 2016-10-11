@@ -1,7 +1,9 @@
 package edu.byu.cs.superasteroids.ship_builder;
 
+import android.content.Context;
 import android.graphics.Point;
 import android.opengl.ETC1;
+import android.widget.Toast;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class ShipBuildingController implements IShipBuildingController {
     ArrayList<Integer> engineIds;
     ArrayList<Integer> extraPartIds;
     ArrayList<Integer> cannonIds;
-    private final float SCALE = (float)0.2;
+    private final float SCALE = (float) 0.2;
 
     public ShipBuildingController(ShipBuildingActivity shipBuildingActivity) {
         this.shipBuildingActivity = shipBuildingActivity;
@@ -43,12 +45,13 @@ public class ShipBuildingController implements IShipBuildingController {
      * The ship building view calls this function when a part selection view is loaded. This function
      * should be used to configure the part selection view: Set the arrows for the view in
      * this function, display the part images, enable start game button if all ship parts
+     *
      * @param partView - which body view
      */
     @Override
     public void onViewLoaded(IShipBuildingView.PartSelectionView partView) {
         partSelectionView = partView;
-        switch(partView) {
+        switch (partView) {
             case MAIN_BODY: // main view
                 shipBuildingActivity.setPartViewImageList(partSelectionView, mainBodyIds);
                 shipBuildingActivity.setArrow(partView, IShipBuildingView.ViewDirection.LEFT, true, "Extra Part");
@@ -91,10 +94,16 @@ public class ShipBuildingController implements IShipBuildingController {
             default:
                 break;
         }
-        if (AsteroidsGame.hasAllParts() == true) {
+        setStartButton();
+    }
+
+    /**
+     * Enable the start button when all ship parts have been selected
+     */
+    private void setStartButton() {
+        if (AsteroidsGame.hasAllParts()) {
             shipBuildingActivity.setStartGameButton(true);
-        }
-        else {
+        } else {
             shipBuildingActivity.setStartGameButton(false);
         }
     }
@@ -102,6 +111,7 @@ public class ShipBuildingController implements IShipBuildingController {
 
     /**
      * Does nothing
+     *
      * @param elapsedTime Time since the last update.
      */
     @Override
@@ -111,6 +121,7 @@ public class ShipBuildingController implements IShipBuildingController {
 
     /**
      * The ShipBuildingView calls this function as it is created. Load ship building content in this function.
+     *
      * @param content An instance of the content manager. This should be used to load images and sound.
      */
     @Override
@@ -197,6 +208,7 @@ public class ShipBuildingController implements IShipBuildingController {
 
     /**
      * Unloads content out of memory
+     *
      * @param content An instance of the content manager. This should be used to unload image and
      */
     @Override
@@ -248,15 +260,21 @@ public class ShipBuildingController implements IShipBuildingController {
      */
     @Override
     public void draw() {
-        drawMainBody();
+        // If the main body doesn't exist (drawMainBody returns false), make sure not to try to draw the other parts
+        if (!drawMainBody())
+            return;
         drawExtraPart();
         drawCannon();
         drawEngine();
     }
 
-    private void drawMainBody() {
+    /**
+     * @return false if the main body hasn't been selected yet, true if successfully drawn
+     */
+    private boolean drawMainBody() {
         Ship ship = AsteroidsGame.getShip();
-        if (ship.getBody() == null) return; // don't draw if a body hasn't been selected yet
+        if (ship.getBody() == null)
+            return false; // don't draw if a body hasn't been selected yet
         ship.setxPos(DrawingHelper.getGameViewWidth() / 2);
         ship.setyPos(DrawingHelper.getGameViewHeight() / 2);
         int id = ship.getBody().getId();
@@ -264,12 +282,14 @@ public class ShipBuildingController implements IShipBuildingController {
         int alpha = 255;
         DrawingHelper.drawImage(id, AsteroidsGame.getShip().getxPos(),
                 AsteroidsGame.getShip().getyPos(), rotation, SCALE, SCALE, alpha);
+        return true;
     }
 
     private void drawCannon() {
         Ship ship = AsteroidsGame.getShip();
-        if (ship.getCannon() == null) return; // don't draw if a cannon hasn't been selected yet
-        CannonType cannon =  ship.getCannon();
+        if (ship.getCannon() == null)
+            return; // don't draw if a cannon hasn't been selected yet
+        CannonType cannon = ship.getCannon();
         int id = cannon.getId();
         Point point = computeAttach(
                 cannon.getAttachPoint(), // part attach point
@@ -285,8 +305,9 @@ public class ShipBuildingController implements IShipBuildingController {
 
     private void drawEngine() {
         Ship ship = AsteroidsGame.getShip();
-        if (ship.getEngine() == null) return; // don't draw if an engine hasn't been selected yet
-        EngineType engine =  ship.getEngine();
+        if (ship.getEngine() == null)
+            return; // don't draw if an engine hasn't been selected yet
+        EngineType engine = ship.getEngine();
         int id = engine.getId();
         Point point = computeAttach(
                 engine.getAttachPoint(), // part attach point
@@ -302,8 +323,9 @@ public class ShipBuildingController implements IShipBuildingController {
 
     private void drawExtraPart() {
         Ship ship = AsteroidsGame.getShip();
-        if (ship.getExtraPart() == null) return; // don't draw if an extra part hasn't been selected yet
-        ExtraPartType extraPart =  ship.getExtraPart();
+        if (ship.getExtraPart() == null)
+            return; // don't draw if an extra part hasn't been selected yet
+        ExtraPartType extraPart = ship.getExtraPart();
         int id = extraPart.getId();
         Point point = computeAttach(
                 extraPart.getAttachPoint(), // part attach point
@@ -319,28 +341,30 @@ public class ShipBuildingController implements IShipBuildingController {
 
     /**
      * Computes the attach point for a ship part
-     * @param partAttach - part attach point
+     *
+     * @param partAttach  - part attach point
      * @param partCenterX - part center x point
      * @param partCenterY - part center Y point
-     * @param shipAttach - ship attach point
-     * @param ship - pointer to ship
+     * @param shipAttach  - ship attach point
+     * @param ship        - pointer to ship
      * @return
      */
     private Point computeAttach(CoordinateString partAttach, int partCenterX, int partCenterY,
-                                 CoordinateString shipAttach, Ship ship) {
-        int partOffsetX = (shipAttach.getxPos() - ship.getBody().getImageWidth()/2) +
+                                CoordinateString shipAttach, Ship ship) {
+        int partOffsetX = (shipAttach.getxPos() - ship.getBody().getImageWidth() / 2) +
                 (partCenterX - partAttach.getxPos());
-        int x = DrawingHelper.getGameViewWidth()/2;
-        int partLocationX = ship.getxPos() + (int)((SCALE) * (float)partOffsetX);
-        int partOffsetY = (shipAttach.getyPos() - ship.getBody().getImageHeight()/2) +
+        int x = DrawingHelper.getGameViewWidth() / 2;
+        int partLocationX = ship.getxPos() + (int) ((SCALE) * (float) partOffsetX);
+        int partOffsetY = (shipAttach.getyPos() - ship.getBody().getImageHeight() / 2) +
                 (partCenterY - partAttach.getyPos());
-        int partLocationY = ship.getyPos() + (int)((SCALE) * (float)partOffsetY);
+        int partLocationY = ship.getyPos() + (int) ((SCALE) * (float) partOffsetY);
         return new Point(partLocationX, partLocationY);
     }
 
     /**
      * The ShipBuildingView calls this function when the user makes a swipe/fling motion in the
      * screen. Respond to the user's swipe/fling motion in this function.
+     *
      * @param direction The direction of the swipe/fling.
      */
     @Override
@@ -351,9 +375,9 @@ public class ShipBuildingController implements IShipBuildingController {
         // Right view: Cannon
         // Left View: Extra Part
         // Bottom View: Engine
-        switch(partSelectionView) {
+        switch (partSelectionView) {
             case MAIN_BODY: // main view
-                switch(direction) {
+                switch (direction) {
                     case UP: // go to bottom view - engine
                         shipBuildingActivity.animateToView(
                                 IShipBuildingView.PartSelectionView.ENGINE,
@@ -379,7 +403,7 @@ public class ShipBuildingController implements IShipBuildingController {
                 }
                 break;
             case ENGINE: // bottom view
-                switch(direction) {
+                switch (direction) {
                     case DOWN: // return to main body view
                         shipBuildingActivity.animateToView(
                                 IShipBuildingView.PartSelectionView.MAIN_BODY,
@@ -393,7 +417,7 @@ public class ShipBuildingController implements IShipBuildingController {
                 }
                 break;
             case EXTRA_PART: // left view
-                switch(direction) {
+                switch (direction) {
                     case LEFT: // return to main body view
                         shipBuildingActivity.animateToView(
                                 IShipBuildingView.PartSelectionView.MAIN_BODY,
@@ -407,7 +431,7 @@ public class ShipBuildingController implements IShipBuildingController {
                 }
                 break;
             case CANNON: // right view
-                switch(direction) {
+                switch (direction) {
                     case RIGHT: // return to main body view
                         shipBuildingActivity.animateToView(
                                 IShipBuildingView.PartSelectionView.MAIN_BODY,
@@ -421,7 +445,7 @@ public class ShipBuildingController implements IShipBuildingController {
                 }
                 break;
             case POWER_CORE: // top view
-                switch(direction) {
+                switch (direction) {
                     case UP: // return to main body view
                         shipBuildingActivity.animateToView(
                                 IShipBuildingView.PartSelectionView.MAIN_BODY,
@@ -440,11 +464,23 @@ public class ShipBuildingController implements IShipBuildingController {
     /**
      * The part selection fragments call this function when a part is selected from the parts list. Respond
      * to the part selection in this function.
+     *
      * @param index The list index of the selected part.
      */
     @Override
     public void onPartSelected(int index) {
-        switch(partSelectionView) {
+        // The player must select a main body before any of the other parts can be attached, so check for a main body
+        // when they are selecting any other part
+        if (partSelectionView != IShipBuildingView.PartSelectionView.MAIN_BODY) {
+            if (AsteroidsGame.getShip().getBody() == null) {
+                Context context = shipBuildingActivity.getApplicationContext();
+                CharSequence text = "You must select a main body first!";
+                int duration = Toast.LENGTH_SHORT;
+                Toast.makeText(context, text, duration).show();
+                return;
+            }
+        }
+        switch (partSelectionView) {
             case MAIN_BODY:
                 AsteroidsGame.getShip().setBody(
                         AsteroidsGame.getMainBodies().get(index));
@@ -468,6 +504,8 @@ public class ShipBuildingController implements IShipBuildingController {
             default:
                 break;
         }
+        // Enable the start game button if all parts have been selected
+        setStartButton();
     }
 
     /**
