@@ -139,6 +139,11 @@ public class VisibleObject {
         this.worldPosition = worldPosition;
     }
 
+    public void setWorldPosition(int x, int y) {
+        this.worldPosition.x = x;
+        this.worldPosition.y = y;
+    }
+
     public Rect getHitBox() {
         return hitBox;
     }

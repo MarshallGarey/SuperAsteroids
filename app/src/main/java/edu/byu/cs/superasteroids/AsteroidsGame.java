@@ -153,6 +153,7 @@ public class AsteroidsGame {
     public void loadContent(ContentManager contentManager) {
         // Load the ship parts:
         ship.loadContent(contentManager);
+        ship.init();
 
 
     }
@@ -200,10 +201,10 @@ public class AsteroidsGame {
 
         // Initialize position to the center of the screen
         // TODO: use center of viewport instead
-        ship.setWorldPosition(new Point(
+        ship.setWorldPosition(
                 DrawingHelper.getGameViewWidth() / 2,   // x position
                 DrawingHelper.getGameViewHeight() / 2   // y position
-        ));
+        );
 
         // Initialize velocity
         ship.setSpeed(0);

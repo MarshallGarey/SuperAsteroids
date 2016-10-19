@@ -1,6 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
 import edu.byu.cs.superasteroids.content.ContentManager;
+import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.CannonType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.EngineType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ExtraPartType;
@@ -66,6 +67,19 @@ public class Ship extends MovingObject {
         this.engine = engine;
         this.extraPart = extraPart;
         this.powerCore = powerCore;
+    }
+
+    /**
+     * Initialize the ship at the beginning of the game
+     */
+    public void init() {
+        setHp(MAX_HP);
+        setWorldPosition(DrawingHelper.getGameViewWidth() / 2, DrawingHelper.getGameViewHeight() / 2);
+        calculatePartPositions();
+    }
+
+    private void calculatePartPositions() {
+
     }
 
     /**
