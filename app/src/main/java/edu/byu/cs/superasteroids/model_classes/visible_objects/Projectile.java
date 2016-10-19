@@ -19,6 +19,10 @@ public class Projectile extends MovingObject{
         this.projectileType = projectileType;
     }
 
+    // ============================================================== //
+    // ================== getters and setters ======================= //
+    // ============================================================== //
+
     public ProjectileType getProjectileType() {
         return projectileType;
     }

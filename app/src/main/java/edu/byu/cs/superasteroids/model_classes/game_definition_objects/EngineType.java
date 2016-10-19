@@ -29,6 +29,10 @@ public class EngineType extends AttachableShipPart {
         this.baseTurnRate = baseTurnRate;
     }
 
+    // ============================================================== //
+    // ================== getters and setters ======================= //
+    // ============================================================== //
+
     public int getId() {
         return id;
     }

@@ -36,6 +36,10 @@ public class ImageObject {
         this.imageHeight = height;
     }
 
+    // ============================================================== //
+    // ================== getters and setters ======================= //
+    // ============================================================== //
+
     public void setImageId(int id) {
         imageId = id;
     }
