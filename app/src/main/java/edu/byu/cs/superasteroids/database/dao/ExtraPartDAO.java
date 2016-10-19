@@ -67,8 +67,8 @@ public class ExtraPartDAO {
         ContentValues values = new ContentValues();
         values.put(Contract.ExtraPartContract.COL_ATTACH, extraPartType.getAttachPoint().getPosition());
         values.put(Contract.ExtraPartContract.COL_FILE, extraPartType.getImageFile());
-        values.put(Contract.ExtraPartContract.COL_WIDTH, extraPartType.getImageWidth());
-        values.put(Contract.ExtraPartContract.COL_HEIGHT, extraPartType.getImageHeight());
+        values.put(Contract.ExtraPartContract.COL_WIDTH, extraPartType.getWidth());
+        values.put(Contract.ExtraPartContract.COL_HEIGHT, extraPartType.getHeight());
         long id = db.insert(Contract.ExtraPartContract.TABLE_NAME, null, values);
         return id >= 0; // id is -1 if insert fails, zero or greater if insert succeeds
     }

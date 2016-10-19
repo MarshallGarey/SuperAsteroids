@@ -1,60 +1,43 @@
 package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
+import edu.byu.cs.superasteroids.content.ContentManager;
+import edu.byu.cs.superasteroids.model_classes.visible_objects.VisibleObject;
+
 /**
  * Created by Marshall Garey
  * This class contains information common to all classes that have an image.
  */
-public class ImageObject {
+public class ImageObject extends VisibleObject {
 
     /**
      * file path to the image
      */
     private String imageFile;
 
-    /**
-     * width of the image
-     */
-    private int imageWidth;
-
-    /**
-     * height of the image
-     */
-    private int imageHeight;
-
-    /**
-     * Every image that is loaded in Android has an ID
-     * We use this ID when it is drawn
-     */
-    private int imageId;
-
-    // default constructor
-    public ImageObject() {}
-
     public ImageObject(String file, int width, int height) {
+        super(width, height);
         this.imageFile = file;
-        this.imageWidth = width;
-        this.imageHeight = height;
+    }
+
+    /**
+     * Load the image (this object) into the ContentManager
+     * @return the id of the image in the ContentManager upon success, or -1 upon failure to load the image
+     */
+    public int loadImage(ContentManager contentManager) {
+        imageId = contentManager.loadImage(imageFile);
+        return imageId;
+    }
+
+    /**
+     * Unload the image (this object) from the ContentManager
+     */
+    public void unloadImage(ContentManager contentManager) {
+        contentManager.unloadImage(imageId);
     }
 
     // ============================================================== //
     // ================== getters and setters ======================= //
     // ============================================================== //
-
-    public void setImageId(int id) {
-        imageId = id;
-    }
-
-    public int getImageId() {
-        return imageId;
-    }
-
-    public int getImageHeight() {
-        return imageHeight;
-    }
-
-    public void setImageHeight(int imageHeight) {
-        this.imageHeight = imageHeight;
-    }
 
     public String getImageFile() {
         return imageFile;
@@ -64,11 +47,4 @@ public class ImageObject {
         this.imageFile = imageFile;
     }
 
-    public int getImageWidth() {
-        return imageWidth;
-    }
-
-    public void setImageWidth(int imageWidth) {
-        this.imageWidth = imageWidth;
-    }
 }

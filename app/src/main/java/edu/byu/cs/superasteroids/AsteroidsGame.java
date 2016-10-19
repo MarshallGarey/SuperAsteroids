@@ -1,11 +1,13 @@
 package edu.byu.cs.superasteroids;
 
 import android.content.Context;
+import android.graphics.Point;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.byu.cs.superasteroids.content.ContentManager;
 import edu.byu.cs.superasteroids.database.Database;
 import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.AsteroidType;
@@ -145,32 +147,67 @@ public class AsteroidsGame {
     }
 
     /**
+     * Loads content of the asteroids game into memory (the activities content manager)
+     * @param contentManager A reference to the content manager of the calling class / activity
+     */
+    public void loadContent(ContentManager contentManager) {
+        // Load the ship parts:
+        ship.loadContent(contentManager);
+
+
+    }
+
+    /**
+     * Unloads content of the asteroids game from memory (the activities content manager)
+     * @param contentManager A reference to the content manager of the calling class / activity
+     */
+    public void unloadContent(ContentManager contentManager) {
+        // Unload the ship parts
+        ship.unloadContent(contentManager);
+    }
+
+    /**
+     * Draws everything on the screen
+     */
+    public void draw() {
+        // Draw the ship
+        ship.draw();
+
+        // TODO: draw everything else - asteroids, minimap, projectiles, etc.
+    }
+
+    /**
      * returns true if all ship parts have been selected, false otherwise
      */
     public static boolean hasAllParts() {
-        if (ship.getBody() != null &&
+        return (ship.getBody() != null &&
             ship.getCannon() != null &&
             ship.getEngine() != null &&
             ship.getExtraPart() != null &&
-            ship.getPowerCore() != null) {
-            return true;
-        }
-        else {
-            return false;
-        }
+            ship.getPowerCore() != null);
     }
 
     /**
      * Constructs a default ship
      */
     public static void setDefaultShip() {
+        // Select parts:
         ship.setBody(mainBodies.get(1));
         ship.setExtraPart(extraPartTypes.get(1));
         ship.setEngine(engines.get(0));
         ship.setPowerCore(powerCoreTypes.get(1));
         ship.setCannon(cannons.get(0));
-        ship.setxPos(DrawingHelper.getGameViewWidth() / 2);
-        ship.setyPos(DrawingHelper.getGameViewHeight() / 2);
+
+        // Initialize position to the center of the screen
+        // TODO: use center of viewport instead
+        ship.setWorldPosition(new Point(
+                DrawingHelper.getGameViewWidth() / 2,   // x position
+                DrawingHelper.getGameViewHeight() / 2   // y position
+        ));
+
+        // Initialize velocity
+        ship.setSpeed(0);
+        ship.setDirection(0);
     }
 
     /**
@@ -192,6 +229,10 @@ public class AsteroidsGame {
     // ============================================================== //
     // ================== getters and setters ======================= //
     // ============================================================== //
+
+    public static AsteroidsGame getSINGLETON() {
+        return SINGLETON;
+    }
 
     public static Database getDatabase() {
         return database;

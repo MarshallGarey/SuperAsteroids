@@ -273,14 +273,17 @@ public class ShipBuildingController implements IShipBuildingController {
         Ship ship = AsteroidsGame.getShip();
         if (ship.getBody() == null)
             return false; // don't draw if a body hasn't been selected yet
-        ship.setxPos(DrawingHelper.getGameViewWidth() / 2);
-        ship.setyPos(DrawingHelper.getGameViewHeight() / 2);
+        ship.setWorldPosition(new Point(
+                DrawingHelper.getGameViewWidth() / 2,
+                DrawingHelper.getGameViewHeight() / 2
+        ));
+
         int id = ship.getBody().getImageId();
         float rotation = 0;
         int alpha = 255;
 
-        DrawingHelper.drawImage(id, AsteroidsGame.getShip().getxPos(),
-                AsteroidsGame.getShip().getyPos(), rotation, SCALE, SCALE, alpha);
+        DrawingHelper.drawImage(id, AsteroidsGame.getShip().getWorldPosition().x,
+                AsteroidsGame.getShip().getWorldPosition().y, rotation, SCALE, SCALE, alpha);
         return true;
     }
 
@@ -292,8 +295,8 @@ public class ShipBuildingController implements IShipBuildingController {
         int id = cannon.getImageId();
         Point point = computeAttach(
                 cannon.getAttachPoint(), // part attach point
-                cannon.getImageWidth() / 2, // part center x point
-                cannon.getImageHeight() / 2, // part center Y point
+                cannon.getWidth() / 2, // part center x point
+                cannon.getHeight() / 2, // part center Y point
                 ship.getBody().getCannonAttach(), // ship attach point
                 ship // pointer to ship
         );
@@ -310,8 +313,8 @@ public class ShipBuildingController implements IShipBuildingController {
         int id = engine.getImageId();
         Point point = computeAttach(
                 engine.getAttachPoint(), // part attach point
-                engine.getImageWidth() / 2, // part center x point
-                engine.getImageHeight() / 2, // part center Y point
+                engine.getWidth() / 2, // part center x point
+                engine.getHeight() / 2, // part center Y point
                 ship.getBody().getEngineAttach(), // ship attach point
                 ship // pointer to ship
         );
@@ -328,8 +331,8 @@ public class ShipBuildingController implements IShipBuildingController {
         int id = extraPart.getImageId();
         Point point = computeAttach(
                 extraPart.getAttachPoint(), // part attach point
-                extraPart.getImageWidth() / 2, // part center x point
-                extraPart.getImageHeight() / 2, // part center Y point
+                extraPart.getWidth() / 2, // part center x point
+                extraPart.getHeight() / 2, // part center Y point
                 ship.getBody().getExtraAttach(), // ship attach point
                 ship // pointer to ship object
         );
@@ -351,14 +354,14 @@ public class ShipBuildingController implements IShipBuildingController {
     private Point computeAttach(CoordinateString partAttach, int partCenterX, int partCenterY,
                                 CoordinateString shipAttach, Ship ship) {
         // Find the X coordinate
-        int partOffsetX = (shipAttach.getxPos() - ship.getBody().getImageWidth() / 2) +
+        int partOffsetX = (shipAttach.getxPos() - ship.getBody().getWidth() / 2) +
                 (partCenterX - partAttach.getxPos());
-        int partLocationX = ship.getxPos() + (int) ((SCALE) * (float) partOffsetX);
+        int partLocationX = ship.getWorldPosition().x + (int) ((SCALE) * (float) partOffsetX);
 
         // Find the Y coordinate
-        int partOffsetY = (shipAttach.getyPos() - ship.getBody().getImageHeight() / 2) +
+        int partOffsetY = (shipAttach.getyPos() - ship.getBody().getHeight() / 2) +
                 (partCenterY - partAttach.getyPos());
-        int partLocationY = ship.getyPos() + (int) ((SCALE) * (float) partOffsetY);
+        int partLocationY = ship.getWorldPosition().y + (int) ((SCALE) * (float) partOffsetY);
 
         // Return the point
         return new Point(partLocationX, partLocationY);

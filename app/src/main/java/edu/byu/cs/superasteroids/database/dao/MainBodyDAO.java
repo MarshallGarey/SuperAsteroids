@@ -69,10 +69,10 @@ public class MainBodyDAO {
         values.put(Contract.MainBodyContract.COL_NAME_CANNON, mainBodyType.getCannonAttach().getPosition());
         values.put(Contract.MainBodyContract.COL_NAME_ENGINE, mainBodyType.getEngineAttach().getPosition());
         values.put(Contract.MainBodyContract.COL_NAME_EXTRA, mainBodyType.getExtraAttach().getPosition());
-        values.put(Contract.MainBodyContract.COL_NAME_HEIGHT, mainBodyType.getImageHeight());
+        values.put(Contract.MainBodyContract.COL_NAME_HEIGHT, mainBodyType.getHeight());
         values.put(Contract.MainBodyContract.COL_NAME_ID, mainBodyType.getId());
         values.put(Contract.MainBodyContract.COL_NAME_IMAGE, mainBodyType.getImageFile());
-        values.put(Contract.MainBodyContract.COL_NAME_WIDTH, mainBodyType.getImageWidth());
+        values.put(Contract.MainBodyContract.COL_NAME_WIDTH, mainBodyType.getWidth());
         long id = db.insert(Contract.MainBodyContract.TABLE_NAME, null, values);
         return id >= 0; // id is -1 if insert fails, zero or greater if insert succeeds
     }

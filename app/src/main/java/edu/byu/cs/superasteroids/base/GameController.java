@@ -1,5 +1,6 @@
 package edu.byu.cs.superasteroids.base;
 
+import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.content.ContentManager;
 import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 
@@ -8,8 +9,6 @@ import edu.byu.cs.superasteroids.drawing.DrawingHelper;
  * Controller for the game
  */
 public class GameController implements IGameDelegate, IController {
-
-    private int spaceBgImageId;
 
     public GameController() {
 
@@ -57,8 +56,7 @@ public class GameController implements IGameDelegate, IController {
      */
     @Override
     public void loadContent(ContentManager content) {
-        spaceBgImageId = content.loadImage("images/space.bmp");
-
+        AsteroidsGame.getSINGLETON().loadContent(content);
     }
 
     /**
@@ -71,7 +69,7 @@ public class GameController implements IGameDelegate, IController {
      */
     @Override
     public void unloadContent(ContentManager content) {
-        content.unloadImage(spaceBgImageId);
+        AsteroidsGame.getSINGLETON().unloadContent(content);
     }
 
     /**
@@ -81,8 +79,8 @@ public class GameController implements IGameDelegate, IController {
     public void draw() {
         // Draw the portion of space that we can see in our viewport
         // viewport.draw
-        DrawingHelper.drawImage(spaceBgImageId, 0, 0, 0, 1, 1, 255);
 
         // Ask AsteroidsGame to draw - it will call draw on each object
+        AsteroidsGame.getSINGLETON().draw();
     }
 }

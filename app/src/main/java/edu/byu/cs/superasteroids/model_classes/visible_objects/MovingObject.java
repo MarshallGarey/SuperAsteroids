@@ -5,7 +5,7 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
  * This class contains information and methods common to all moving objects. Moving objects are
  * things that move around the screen, such as projectiles, asteroids, and the ship.
  */
-public class MovingObject extends PositionedObject {
+public class MovingObject extends VisibleObject {
 
     /**
      * The speed at which the object is moving.
@@ -30,17 +30,15 @@ public class MovingObject extends PositionedObject {
     }
 
     /**
-     * Updates the positions (x and y coordinates) of the image
-     * and then draws the image
+     * Updates the position of the image (world (x,y) coordinates)
      */
-    public void update(int imageId) {
+    public void update() {
         // update x and y based on the direction and speed it's going and redraw the object
         updatePosition(speed, direction);
-        draw(this.getxPos(), this.getyPos(), imageId);
     }
 
     /**
-     * Detects if the object has collided with any other object.
+     * TODO: Detects if the object has collided with any other object.
      */
     public boolean detectCollision() {
         return false;

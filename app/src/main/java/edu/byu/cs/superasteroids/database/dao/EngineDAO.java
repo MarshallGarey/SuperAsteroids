@@ -92,11 +92,11 @@ public class EngineDAO {
     public boolean add(EngineType engineType) {
         ContentValues values = new ContentValues();
         values.put(Contract.EngineContract.COL_ATTACH, engineType.getAttachPoint().getPosition());
-        values.put(Contract.EngineContract.COL_HEIGHT, engineType.getImageHeight());
+        values.put(Contract.EngineContract.COL_HEIGHT, engineType.getHeight());
         values.put(Contract.EngineContract.COL_IMAGE, engineType.getImageFile());
         values.put(Contract.EngineContract.COL_SPEED, engineType.getBaseSpeed());
         values.put(Contract.EngineContract.COL_TURN, engineType.getBaseTurnRate());
-        values.put(Contract.EngineContract.COL_WIDTH, engineType.getImageWidth());
+        values.put(Contract.EngineContract.COL_WIDTH, engineType.getWidth());
         long id = db.insert(Contract.EngineContract.TABLE_NAME, null, values);
         return id >= 0; // id is -1 if insert fails, zero or greater if insert succeeds
     }

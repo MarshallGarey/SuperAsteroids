@@ -96,11 +96,11 @@ public class CannonDAO {
         values.put(Contract.CannonContract.COL_NAME_ATTACH, cannonType.getAttachPoint().getPosition());
         values.put(Contract.CannonContract.COL_NAME_EMIT, cannonType.getEmitPoint().getPosition());
         values.put(Contract.CannonContract.COL_NAME_FILE, cannonType.getImageFile());
-        values.put(Contract.CannonContract.COL_NAME_WIDTH, cannonType.getImageWidth());
-        values.put(Contract.CannonContract.COL_NAME_HEIGHT, cannonType.getImageHeight());
+        values.put(Contract.CannonContract.COL_NAME_WIDTH, cannonType.getWidth());
+        values.put(Contract.CannonContract.COL_NAME_HEIGHT, cannonType.getHeight());
         values.put(Contract.CannonContract.COL_NAME_ATTACK_IMAGE, cannonType.getProjectileType().getImageFile());
-        values.put(Contract.CannonContract.COL_NAME_ATTACK_WIDTH, cannonType.getProjectileType().getImageWidth());
-        values.put(Contract.CannonContract.COL_NAME_ATTACK_HEIGHT, cannonType.getProjectileType().getImageHeight());
+        values.put(Contract.CannonContract.COL_NAME_ATTACK_WIDTH, cannonType.getProjectileType().getWidth());
+        values.put(Contract.CannonContract.COL_NAME_ATTACK_HEIGHT, cannonType.getProjectileType().getHeight());
         values.put(Contract.CannonContract.COL_NAME_ATTACK_SOUND, cannonType.getProjectileType().getAttackSoundFile());
         values.put(Contract.CannonContract.COL_NAME_DAMAGE, cannonType.getProjectileType().getDamage());
         long id = db.insert(Contract.CannonContract.TABLE_NAME, null, values);

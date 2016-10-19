@@ -15,12 +15,10 @@ public class AsteroidType extends ImageObject {
     private String type;
 
     public AsteroidType(JSONObject obj) throws JSONException {
-        super.setImageFile(obj.getString("image"));
-        super.setImageWidth(obj.getInt("imageWidth"));
-        super.setImageHeight(obj.getInt("imageHeight"));
+        super(obj.getString("image"),
+                obj.getInt("imageWidth"),
+                obj.getInt("imageHeight"));
         type = obj.getString("type");
-
-        // Log.i("JsonDomParserExample", title + ", " + artist);
     }
 
     public AsteroidType(String file, int width, int height, String type) {

@@ -86,8 +86,8 @@ public class AsteroidTypeDAO {
     public boolean add(AsteroidType asteroidType) {
         ContentValues values = new ContentValues();
         values.put(Contract.AsteroidTypeContract.COL_NAME_ASTEROID_TYPE_IMAGE, asteroidType.getImageFile());
-        values.put(Contract.AsteroidTypeContract.COL_NAME_WIDTH, asteroidType.getImageWidth());
-        values.put(Contract.AsteroidTypeContract.COL_NAME_HEIGHT, asteroidType.getImageHeight());
+        values.put(Contract.AsteroidTypeContract.COL_NAME_WIDTH, asteroidType.getWidth());
+        values.put(Contract.AsteroidTypeContract.COL_NAME_HEIGHT, asteroidType.getHeight());
         values.put(Contract.AsteroidTypeContract.COL_NAME_TYPE, asteroidType.getType());
         long id = db.insert(Contract.AsteroidTypeContract.TABLE_NAME, null, values);
         return id >= 0; // id is -1 if insert fails, zero or greater if insert succeeds

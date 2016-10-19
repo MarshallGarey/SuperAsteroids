@@ -1,5 +1,6 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
+import edu.byu.cs.superasteroids.content.ContentManager;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.CannonType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.EngineType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ExtraPartType;
@@ -68,30 +69,53 @@ public class Ship extends MovingObject {
     }
 
     /**
-     * Draws the ship at the
+     * Draws the ship
      */
     public void draw() {
-
+        // TODO: call draw individually on each part of the ship
+        body.draw();
+        cannon.draw();
+        engine.draw();
+        extraPart.draw();
     }
 
-    public void updateHitBox() {
-        setHeight(getShipHeight());
-        setWidth(getShipWidth());
-        setHitBox();
-    }
+    // TODO: consider making a single hit box for the ship rather that individual hit boxes for the parts
+//    public void updateHitBox() {
+//        setHeight(getShipHeight());
+//        setWidth(getShipWidth());
+//        setHitBox();
+//    }
 
     /**
      * Calculate the width of the ship based on its parts
      */
-    public int getShipWidth() {
-        return extraPart.getImageWidth() + body.getImageWidth() + cannon.getImageWidth();
-    }
+//    public int getShipWidth() {
+//        return extraPart.getImageWidth() + body.getImageWidth() + cannon.getImageWidth();
+//    }
 
     /**
      * Calculate the height of the ship based on its parts
      */
-    public int getShipHeight() {
-        return extraPart.getImageHeight() + body.getImageHeight() + cannon.getImageHeight();
+//    public int getShipHeight() {
+//        return extraPart.getImageHeight() + body.getImageHeight() + cannon.getImageHeight();
+//    }
+
+    /**
+     * Load the ship images into memory
+     * @param contentManager The content manager of the active activity
+     */
+    public void loadContent(ContentManager contentManager) {
+        body.loadImage(contentManager);
+        cannon.loadImage(contentManager);
+        engine.loadImage(contentManager);
+        extraPart.loadImage(contentManager);
+    }
+
+    public void unloadContent(ContentManager contentManager) {
+        body.unloadImage(contentManager);
+        cannon.unloadImage(contentManager);
+        engine.unloadImage(contentManager);
+        extraPart.unloadImage(contentManager);
     }
 
     // ============================================================== //
