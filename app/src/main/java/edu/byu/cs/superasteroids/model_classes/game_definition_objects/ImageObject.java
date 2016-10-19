@@ -21,6 +21,12 @@ public class ImageObject {
      */
     private int imageHeight;
 
+    /**
+     * Every image that is loaded in Android has an ID
+     * We use this ID when it is drawn
+     */
+    private int imageId;
+
     // default constructor
     public ImageObject() {}
 
@@ -28,6 +34,14 @@ public class ImageObject {
         this.imageFile = file;
         this.imageWidth = width;
         this.imageHeight = height;
+    }
+
+    public void setImageId(int id) {
+        imageId = id;
+    }
+
+    public int getImageId() {
+        return imageId;
     }
 
     public int getImageHeight() {

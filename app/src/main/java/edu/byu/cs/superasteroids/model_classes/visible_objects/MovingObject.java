@@ -29,6 +29,27 @@ public class MovingObject extends PositionedObject {
         this.direction = direction;
     }
 
+    /**
+     * Updates the positions (x and y coordinates) of the image
+     * and then draws the image
+     */
+    public void update(int imageId) {
+        // update x and y based on the direction and speed it's going and redraw the object
+        updatePosition(speed, direction);
+        draw(this.getxPos(), this.getyPos(), imageId);
+    }
+
+    /**
+     * Detects if the object has collided with any other object.
+     */
+    public boolean detectCollision() {
+        return false;
+    }
+
+    // ----------------------------------------------------------------------------------------------------------------
+    // Getters and setters --------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
+
     public int getSpeed() {
         return speed;
     }
@@ -45,10 +66,11 @@ public class MovingObject extends PositionedObject {
         this.direction = direction;
     }
 
-    /**
-     * Detects if the object has collided with any other object.
-     */
-    void detectCollision() {
-       return;
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
     }
 }

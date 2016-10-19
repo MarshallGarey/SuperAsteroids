@@ -108,7 +108,6 @@ public class ShipBuildingController implements IShipBuildingController {
         }
     }
 
-
     /**
      * Does nothing
      *
@@ -157,7 +156,7 @@ public class ShipBuildingController implements IShipBuildingController {
         for (int i = 0; i < engines.size(); i++) {
             String file = engines.get(i).getImageFile();
             ids.add(i, content.loadImage(file));
-            engines.get(i).setId(ids.get(i));
+            engines.get(i).setImageId(ids.get(i));
         }
         return ids;
     }
@@ -171,7 +170,7 @@ public class ShipBuildingController implements IShipBuildingController {
         for (int i = 0; i < mainBodies.size(); i++) {
             String file = mainBodies.get(i).getImageFile();
             ids.add(i, content.loadImage(file));
-            mainBodies.get(i).setId(ids.get(i));
+            mainBodies.get(i).setImageId(ids.get(i));
         }
         return ids;
     }
@@ -183,10 +182,9 @@ public class ShipBuildingController implements IShipBuildingController {
         ArrayList<CannonType> cannonTypes = AsteroidsGame.getCannons();
         ArrayList<Integer> ids = new ArrayList<>();
         for (int i = 0; i < cannonTypes.size(); i++) {
-            cannonTypes.get(i).setId(content.loadImage(
-                    cannonTypes.get(i).getImageFile()
-            ));
-            ids.add(i, cannonTypes.get(i).getId());
+            String file = cannonTypes.get(i).getImageFile();
+            ids.add(i, content.loadImage(file));
+            cannonTypes.get(i).setImageId(ids.get(i));
         }
         return ids;
     }
@@ -198,10 +196,9 @@ public class ShipBuildingController implements IShipBuildingController {
         ArrayList<ExtraPartType> extraParts = AsteroidsGame.getExtraPartTypes();
         ArrayList<Integer> ids = new ArrayList<>();
         for (int i = 0; i < extraParts.size(); i++) {
-            extraParts.get(i).setId(content.loadImage(
-                    extraParts.get(i).getImageFile()
-            ));
-            ids.add(i, extraParts.get(i).getId());
+            String file = extraParts.get(i).getImageFile();
+            ids.add(i, content.loadImage(file));
+            extraParts.get(i).setImageId(ids.get(i));
         }
         return ids;
     }
@@ -210,6 +207,7 @@ public class ShipBuildingController implements IShipBuildingController {
      * Unloads content out of memory
      *
      * @param content An instance of the content manager. This should be used to unload image and
+     *                sound files.
      */
     @Override
     public void unloadContent(ContentManager content) {
@@ -277,9 +275,10 @@ public class ShipBuildingController implements IShipBuildingController {
             return false; // don't draw if a body hasn't been selected yet
         ship.setxPos(DrawingHelper.getGameViewWidth() / 2);
         ship.setyPos(DrawingHelper.getGameViewHeight() / 2);
-        int id = ship.getBody().getId();
+        int id = ship.getBody().getImageId();
         float rotation = 0;
         int alpha = 255;
+
         DrawingHelper.drawImage(id, AsteroidsGame.getShip().getxPos(),
                 AsteroidsGame.getShip().getyPos(), rotation, SCALE, SCALE, alpha);
         return true;
@@ -290,7 +289,7 @@ public class ShipBuildingController implements IShipBuildingController {
         if (ship.getCannon() == null)
             return; // don't draw if a cannon hasn't been selected yet
         CannonType cannon = ship.getCannon();
-        int id = cannon.getId();
+        int id = cannon.getImageId();
         Point point = computeAttach(
                 cannon.getAttachPoint(), // part attach point
                 cannon.getImageWidth() / 2, // part center x point
@@ -308,7 +307,7 @@ public class ShipBuildingController implements IShipBuildingController {
         if (ship.getEngine() == null)
             return; // don't draw if an engine hasn't been selected yet
         EngineType engine = ship.getEngine();
-        int id = engine.getId();
+        int id = engine.getImageId();
         Point point = computeAttach(
                 engine.getAttachPoint(), // part attach point
                 engine.getImageWidth() / 2, // part center x point
@@ -326,13 +325,13 @@ public class ShipBuildingController implements IShipBuildingController {
         if (ship.getExtraPart() == null)
             return; // don't draw if an extra part hasn't been selected yet
         ExtraPartType extraPart = ship.getExtraPart();
-        int id = extraPart.getId();
+        int id = extraPart.getImageId();
         Point point = computeAttach(
                 extraPart.getAttachPoint(), // part attach point
                 extraPart.getImageWidth() / 2, // part center x point
                 extraPart.getImageHeight() / 2, // part center Y point
                 ship.getBody().getExtraAttach(), // ship attach point
-                ship // pointer to ship
+                ship // pointer to ship object
         );
         float rotation = 0;
         int alpha = 255;
@@ -347,17 +346,21 @@ public class ShipBuildingController implements IShipBuildingController {
      * @param partCenterY - part center Y point
      * @param shipAttach  - ship attach point
      * @param ship        - pointer to ship
-     * @return
+     * @return point      - the location the part will be drawn
      */
     private Point computeAttach(CoordinateString partAttach, int partCenterX, int partCenterY,
                                 CoordinateString shipAttach, Ship ship) {
+        // Find the X coordinate
         int partOffsetX = (shipAttach.getxPos() - ship.getBody().getImageWidth() / 2) +
                 (partCenterX - partAttach.getxPos());
-        int x = DrawingHelper.getGameViewWidth() / 2;
         int partLocationX = ship.getxPos() + (int) ((SCALE) * (float) partOffsetX);
+
+        // Find the Y coordinate
         int partOffsetY = (shipAttach.getyPos() - ship.getBody().getImageHeight() / 2) +
                 (partCenterY - partAttach.getyPos());
         int partLocationY = ship.getyPos() + (int) ((SCALE) * (float) partOffsetY);
+
+        // Return the point
         return new Point(partLocationX, partLocationY);
     }
 

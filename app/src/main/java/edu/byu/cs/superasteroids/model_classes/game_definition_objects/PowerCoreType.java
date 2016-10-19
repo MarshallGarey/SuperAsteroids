@@ -11,6 +11,8 @@ public class PowerCoreType {
      */
     private int id;
 
+    private String file;
+
     public int getId() {
         return id;
     }
@@ -18,11 +20,6 @@ public class PowerCoreType {
     public void setId(int id) {
         this.id = id;
     }
-
-    /**
-     * image file
-     */
-    private String file;
 
     /**
      * boost stat for the cannon
@@ -40,9 +37,7 @@ public class PowerCoreType {
         this.engineBoost = engineBoost;
     }
 
-    public String getFile() {
-        return file;
-    }
+    public String getFile() { return file; }
 
     public void setFile(String file) {
         this.file = file;
