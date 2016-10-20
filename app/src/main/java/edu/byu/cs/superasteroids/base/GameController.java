@@ -3,6 +3,7 @@ package edu.byu.cs.superasteroids.base;
 import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.content.ContentManager;
 import edu.byu.cs.superasteroids.drawing.DrawingHelper;
+import edu.byu.cs.superasteroids.model_classes.visible_objects.Asteroid;
 
 /**
  * Created by Marshall Garey
@@ -10,8 +11,18 @@ import edu.byu.cs.superasteroids.drawing.DrawingHelper;
  */
 public class GameController implements IGameDelegate, IController {
 
-    public GameController() {
+    private IView view = null;
+    private State_e state;
 
+    private enum State_e {
+        STATE_START,
+        STATE_RUN,
+        STATE_NEW_LEVEL,
+        STATE_END
+    }
+
+    public GameController() {
+        state = State_e.STATE_START;
     }
 
     /**
@@ -21,7 +32,7 @@ public class GameController implements IGameDelegate, IController {
      */
     @Override
     public IView getView() {
-        return null;
+        return view;
     }
 
     /**
@@ -31,7 +42,7 @@ public class GameController implements IGameDelegate, IController {
      */
     @Override
     public void setView(IView view) {
-
+        this.view = view;
     }
 
     /**
@@ -43,7 +54,34 @@ public class GameController implements IGameDelegate, IController {
      */
     @Override
     public void update(double elapsedTime) {
-        // Ask AsteroidsGame to update - it will call update on each object
+
+        /**
+         * I use a state machine.
+         */
+        switch(state) {
+
+            // Initialize and move on to the regular game engine
+            case STATE_START:
+                AsteroidsGame.getSINGLETON().init();
+                state = State_e.STATE_RUN;
+                break;
+
+            // Main loop of the game. Just update stuff
+            case STATE_RUN:
+                AsteroidsGame.getSINGLETON().update();
+                break;
+
+            // New level, need to reload and do things
+            case STATE_NEW_LEVEL:
+                break;
+
+            // Last level won, congratulate the player and quit
+            case STATE_END:
+                break;
+        }
+
+        AsteroidsGame.getSINGLETON().update();
+
     }
 
     /**

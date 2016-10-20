@@ -106,7 +106,12 @@ public class AsteroidsGame {
     private static HashMap<Integer, Projectile> projectiles;
 
     /**
-     * Import all game data with this constructor
+     * Private constructor to prevent other classes from instantiating this one
+     */
+    private AsteroidsGame() {}
+
+    /**
+     * Import all game data
      */
     public static void initAsteroidsGame(Context context) {
         // Open the database
@@ -153,9 +158,8 @@ public class AsteroidsGame {
     public void loadContent(ContentManager contentManager) {
         // Load the ship parts:
         ship.loadContent(contentManager);
-        ship.init();
 
-
+        // TODO: load other content
     }
 
     /**
@@ -175,6 +179,20 @@ public class AsteroidsGame {
         ship.draw();
 
         // TODO: draw everything else - asteroids, minimap, projectiles, etc.
+    }
+
+    /**
+     * Updates stuff
+     */
+    public void update() {
+        ship.update();
+    }
+
+    /**
+     * Initialize the ship, asteroids, etc. at the beginning of the level
+     */
+    public void init() {
+        ship.init();
     }
 
     /**
@@ -199,16 +217,7 @@ public class AsteroidsGame {
         ship.setPowerCore(powerCoreTypes.get(1));
         ship.setCannon(cannons.get(0));
 
-        // Initialize position to the center of the screen
-        // TODO: use center of viewport instead
-        ship.setWorldPosition(
-                DrawingHelper.getGameViewWidth() / 2,   // x position
-                DrawingHelper.getGameViewHeight() / 2   // y position
-        );
-
-        // Initialize velocity
-        ship.setSpeed(0);
-        ship.setDirection(0);
+        ship.init();
     }
 
     /**

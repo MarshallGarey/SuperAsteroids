@@ -13,7 +13,7 @@ public class VisibleObject {
 
     // Constants:
 
-    private final float SCALE = (float) 0.2;
+    protected final float SCALE = (float) 0.2;
     private final int OPAQUE = 255;
     private final int TRANSPARENT = 0;
     private final int IMAGE_NOT_LOADED = -1;

@@ -18,6 +18,14 @@ public class AttachableShipPart extends ShipPart {
         this.attachPoint = new CoordinateString(attachPoint);
     }
 
+    public int getCenterX() {
+        return getWidth() / 2;
+    }
+
+    public int getCenterY() {
+        return getHeight() / 2;
+    }
+
     public CoordinateString getAttachPoint() {
         return attachPoint;
     }
