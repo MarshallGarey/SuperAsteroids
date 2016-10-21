@@ -6,11 +6,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import edu.byu.cs.superasteroids.model_classes.visible_objects.VisibleObject;
+
 /**
  * Created by Marshall Garey
  * All the information about a level is stored in this class.
  */
 public class Level {
+
+    public static final int STARTING_LEVEL = 1;
 
     /**
      * The level number.

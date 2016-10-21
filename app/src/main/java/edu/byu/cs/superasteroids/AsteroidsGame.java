@@ -1,15 +1,12 @@
 package edu.byu.cs.superasteroids;
 
 import android.content.Context;
-import android.graphics.Point;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.byu.cs.superasteroids.content.ContentManager;
 import edu.byu.cs.superasteroids.database.Database;
-import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.AsteroidType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.CannonType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.EngineType;
@@ -18,10 +15,12 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.Level;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.MainBodyType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.PowerCoreType;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Asteroid;
+import edu.byu.cs.superasteroids.model_classes.visible_objects.Background;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.BgObject;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.MiniMap;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Projectile;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Ship;
+import edu.byu.cs.superasteroids.model_classes.visible_objects.Viewport;
 
 /**
  * Created by Marshall Garey
@@ -34,6 +33,8 @@ public class AsteroidsGame {
      * Handle for other classes to be able to access game data
      */
     public static AsteroidsGame SINGLETON = new AsteroidsGame();
+
+    private final static String BACKGROUND_IMAGE_FILE = "images/space.bmp";
 
     /**
      * The game's database
@@ -50,10 +51,17 @@ public class AsteroidsGame {
      */
     private static ArrayList<String> bgObjectTypes;
 
+    private static ArrayList<BgObject> bgObjects;
+
     /**
      * a list of levels in our game
      */
     private static ArrayList<Level> levels;
+
+    /**
+     * the current level the player is on
+     */
+    private static int currentLevelNumber;
 
     /**
      * a list of possible cannons for the ship
@@ -86,11 +94,6 @@ public class AsteroidsGame {
     private static HashMap<Integer, Asteroid> asteroids;
 
     /**
-     * a list of all background objects in the game
-     */
-    private static ArrayList<BgObject> bgObjects;
-
-    /**
      * the game's minimap
      */
     private static MiniMap miniMap;
@@ -106,12 +109,19 @@ public class AsteroidsGame {
     private static HashMap<Integer, Projectile> projectiles;
 
     /**
+     * the game's background - consists of an image
+     */
+    private static Background background;
+
+    /**
      * Private constructor to prevent other classes from instantiating this one
      */
     private AsteroidsGame() {}
 
     /**
      * Import all game data
+     * TODO: there's a bug - the game crashes if I start the game, then press back, then select a new part of the
+     * ship, then click start again. Look for references to this method (initAsteroidsGame) and also startActivity(game)
      */
     public static void initAsteroidsGame(Context context) {
         // Open the database
@@ -126,6 +136,9 @@ public class AsteroidsGame {
         // get levels
         levels = new ArrayList<>();
         levels = database.getLevelDAO().getAll();
+
+        // initialize to first level of the game
+        currentLevelNumber = Level.STARTING_LEVEL;
 
         // get cannons
         cannons = new ArrayList<>();
@@ -149,6 +162,33 @@ public class AsteroidsGame {
 
         // create new objects
         ship = new Ship(0, 0, 5, 0, 0, null, null, null, null, null);
+
+        // Initialize the background
+        background = new Background(BACKGROUND_IMAGE_FILE,
+                getLevel(currentLevelNumber).getLevelWidth(),
+                getLevel(currentLevelNumber).getLevelHeight());
+
+        // Initialize the list of background objects for the current level.
+        initBgObjects();
+    }
+
+    /**
+     * Initialize a list of the background object for the current level.
+     */
+    private static void initBgObjects() {
+
+        bgObjects = new ArrayList<>();
+
+        // Add all the objects for the current level:
+        Level level = getLevel(currentLevelNumber);
+        for (Level.LevelObject object : level.getLevelObjects()) {
+
+            // Subtract 1 from the object id because they are referenced in the database starting at 1, not 0.
+            String file = bgObjectTypes.get(object.getObjectId() - 1);
+
+            // Add the object to the list.
+            bgObjects.add(new BgObject(object.getPosX(), object.getPosY(), file, object.getScale()));
+        }
     }
 
     /**
@@ -158,6 +198,14 @@ public class AsteroidsGame {
     public void loadContent(ContentManager contentManager) {
         // Load the ship parts:
         ship.loadContent(contentManager);
+
+        // Load the background
+        background.loadContent(contentManager);
+
+        // Load the background objects
+        for (BgObject object : bgObjects) {
+            object.loadImage(contentManager);
+        }
 
         // TODO: load other content
     }
@@ -169,12 +217,28 @@ public class AsteroidsGame {
     public void unloadContent(ContentManager contentManager) {
         // Unload the ship parts
         ship.unloadContent(contentManager);
+
+        // Unload the background
+        background.getBackgroundImage().unloadImage(contentManager);
+
+        // Unload the background objects
+        for (BgObject object : bgObjects) {
+            object.unloadImage(contentManager);
+        }
     }
 
     /**
      * Draws everything on the screen
      */
     public void draw() {
+        // Draw the background FIRST
+        background.draw();
+
+        // Draw the background images
+        for (BgObject object : bgObjects) {
+            object.draw();
+        }
+
         // Draw the ship
         ship.draw();
 
@@ -182,17 +246,44 @@ public class AsteroidsGame {
     }
 
     /**
-     * Updates stuff
+     * Updates all objects in the game.
      */
-    public void update() {
+    public static void update() {
+
+        // Update the viewport first, because all other objects are drawn relative to it.
+        Viewport.update();
+
+        // Update the ship.
         ship.update();
+
     }
 
     /**
      * Initialize the ship, asteroids, etc. at the beginning of the level
      */
-    public void init() {
+    public static void initLevel() {
+        // Initialize the viewport
+        Level level = getLevel(currentLevelNumber);
+
+        Viewport.init(level.getLevelWidth(), level.getLevelHeight());
+
+        // Initialize the ship
         ship.init();
+    }
+
+    /**
+     * Find the specified level. I do it in a loop, because I don't want to have to guarantee that the levels are
+     * stored in consecutive order.
+     * @param number The level number we're interested in. Starts at 1.
+     * @return A reference to the level, or the first one in the list if it isn't found.
+     */
+    private static Level getLevel(int number) {
+        for (Level l : levels) {
+            if (l.getLevelNumber() == number) {
+                return l;
+            }
+        }
+        return levels.get(0);
     }
 
     /**
@@ -217,7 +308,8 @@ public class AsteroidsGame {
         ship.setPowerCore(powerCoreTypes.get(1));
         ship.setCannon(cannons.get(0));
 
-        ship.init();
+        // Initialize the level.
+        initLevel();
     }
 
     /**
@@ -322,14 +414,6 @@ public class AsteroidsGame {
 
     public static void setAsteroids(HashMap<Integer, Asteroid> asteroids) {
         AsteroidsGame.asteroids = asteroids;
-    }
-
-    public static ArrayList<BgObject> getBgObjects() {
-        return bgObjects;
-    }
-
-    public static void setBgObjects(ArrayList<BgObject> bgObjects) {
-        AsteroidsGame.bgObjects = bgObjects;
     }
 
     public static MiniMap getMiniMap() {

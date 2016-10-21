@@ -75,6 +75,10 @@ public class Ship extends MovingObject {
     @Override
     public void update() {
         calculatePartPositions();
+        body.updateHitBox();
+        cannon.updateHitBox();
+        engine.updateHitBox();
+        extraPart.updateHitBox();
         super.update();
     }
 
@@ -84,9 +88,8 @@ public class Ship extends MovingObject {
     public void init() {
         setHp(MAX_HP);
 
-        // Initialize position of the ship
-        // TODO: use center of viewport instead
-        setWorldPosition(DrawingHelper.getGameViewWidth() / 2, DrawingHelper.getGameViewHeight() / 2);
+        // Initialize position of the ship in the center of the viewport
+        setWorldPosition(Viewport.getView().centerX(), Viewport.getView().centerY());
         calculatePartPositions();
 
         // Initialize velocity

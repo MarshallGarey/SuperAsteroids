@@ -53,6 +53,11 @@
 						"position":"1000,1000",
 						"objectId":1,
 						"scale":1.5
+					},
+					{
+						"position":"1750,1600",
+                        "objectId":2,
+                        "scale":0.5
 					}
 
 				],

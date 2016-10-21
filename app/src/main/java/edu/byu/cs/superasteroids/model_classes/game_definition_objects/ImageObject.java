@@ -1,5 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
+import android.graphics.Point;
+
 import edu.byu.cs.superasteroids.content.ContentManager;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.VisibleObject;
 
@@ -14,8 +16,24 @@ public class ImageObject extends VisibleObject {
      */
     private String imageFile;
 
+    /**
+     * width/height constructor
+     * @param file      image
+     * @param width     image width
+     * @param height    image height
+     */
     public ImageObject(String file, int width, int height) {
         super(width, height);
+        this.imageFile = file;
+    }
+
+    /**
+     * position constructor
+     * @param file  image
+     * @param point position
+     */
+    public ImageObject(String file, Point point) {
+        super(point);
         this.imageFile = file;
     }
 

@@ -1,9 +1,14 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.Rect;
+import android.net.DhcpInfo;
+import android.view.View;
+import android.widget.Toast;
 
 import edu.byu.cs.superasteroids.drawing.DrawingHelper;
+import edu.byu.cs.superasteroids.game.GameActivity;
 
 /**
  * Created by Marshall Garey
@@ -37,8 +42,8 @@ public class VisibleObject {
     public VisibleObject(int width, int height) {
         this.width = width;
         this.height = height;
-        worldPosition = new Point();
-        hitBox = new Rect();
+        worldPosition = new Point(0,0);
+        updateHitBox();
         imageId = IMAGE_NOT_LOADED;
     }
 
@@ -52,6 +57,7 @@ public class VisibleObject {
         this.imageId = IMAGE_NOT_LOADED;
         this.width = 0;
         this.height = 0;
+        updateHitBox();
     }
 
     /**
@@ -67,6 +73,35 @@ public class VisibleObject {
      * TODO: get screen x and y positions by getting the viewport and world
      */
     public void draw() {
+        // Test if the viewport intersects with the object, then translate the world coordinates to screen
+        // coordinates, then draw.
+        if (Rect.intersects(Viewport.getView(), this.getHitBox())) {
+            PointF pointf = translateToScreenCoordinates();
+            DrawingHelper.drawImage(imageId, pointf.x, pointf.y, 0, SCALE, SCALE, OPAQUE);
+        }
+    }
+
+    /**
+     * Draws the portion of the image that intersects with the passed rectangle.
+     * @param imagePortion  The rectangle (in image coordinates) that represents the portion of the image to be drawn.
+     */
+    public void drawPartial(Rect imagePortion) {
+        DrawingHelper.drawImage(imageId, imagePortion, null);
+    }
+
+    /**
+     * Draws an image
+     * @param scale How much to scale the image by.
+     */
+    public void draw(float scale) {
+        PointF pointF = translateToScreenCoordinates();
+        DrawingHelper.drawImage(imageId, pointF.x, pointF.y, 0, scale, scale, OPAQUE);
+    }
+
+    /**
+     * Draws the object, assuming that its (x,y) world coordinates are the same as screen coordinates.
+     */
+    public void drawAbsolutePosition() {
         DrawingHelper.drawImage(imageId, worldPosition.x, worldPosition.y, 0, SCALE, SCALE, OPAQUE);
     }
 
@@ -82,15 +117,6 @@ public class VisibleObject {
     }
 
     /**
-     * Draws the object at its x and y position on the screen.
-     * Different than draw because it assumes the object's x and y coordinates are relative to the screen, not the
-     * viewport.
-     */
-    public void drawAbsolutePosition() {
-        DrawingHelper.drawImage(imageId, worldPosition.x, worldPosition.y, 0, SCALE, SCALE, OPAQUE);
-    }
-
-    /**
      * Set the bounding rectangle, which is used when calculating collisions
      * Left, top, right, and bottom are the coordinates of the rectangle
      * x,y are the center of the image, so divide width and height by 2 and add to x,y to get left, top, right, bottom
@@ -101,6 +127,16 @@ public class VisibleObject {
         int top = worldPosition.y - height / 2;
         int bottom = worldPosition.y + height / 2;
         hitBox = new Rect(left, top, right, bottom);
+    }
+
+    /**
+     * Translate the objects world (x,y) coordinates to screen coordinates
+     * @return The screen coordinates
+     */
+    private PointF translateToScreenCoordinates() {
+        float screenX = (float) (worldPosition.x - Viewport.getView().left);
+        float screenY = (float) (worldPosition.y - Viewport.getView().top);
+        return new PointF(screenX, screenY);
     }
 
     // ============================================================== //

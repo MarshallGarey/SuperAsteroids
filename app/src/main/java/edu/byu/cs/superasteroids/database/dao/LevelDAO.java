@@ -67,7 +67,7 @@ public class LevelDAO {
         }
         c.close();
 
-        // Now get LevelAsteroidS
+        // Now get LevelAsteroids
         // query the database
         c = db.rawQuery(SEL_ALL_ASTEROIDS, EMPTY_STR_ARRAY);
 

@@ -2,8 +2,6 @@ package edu.byu.cs.superasteroids.base;
 
 import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.content.ContentManager;
-import edu.byu.cs.superasteroids.drawing.DrawingHelper;
-import edu.byu.cs.superasteroids.model_classes.visible_objects.Asteroid;
 
 /**
  * Created by Marshall Garey
@@ -62,11 +60,11 @@ public class GameController implements IGameDelegate, IController {
 
             // Initialize and move on to the regular game engine
             case STATE_START:
-                AsteroidsGame.getSINGLETON().init();
+                AsteroidsGame.getSINGLETON().initLevel();
                 state = State_e.STATE_RUN;
                 break;
 
-            // Main loop of the game. Just update stuff
+            // Main loop of the game. Just update stuff.
             case STATE_RUN:
                 AsteroidsGame.getSINGLETON().update();
                 break;
@@ -79,9 +77,6 @@ public class GameController implements IGameDelegate, IController {
             case STATE_END:
                 break;
         }
-
-        AsteroidsGame.getSINGLETON().update();
-
     }
 
     /**

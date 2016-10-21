@@ -9,31 +9,25 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ImageObje
  * Information about a background object in the game, such as nebulas, etc. These objects are
  * visible but do not move - they are decorations to make the game look cool.
  */
-public class BgObject extends VisibleObject {
+public class BgObject extends ImageObject {
 
-    /**
-     * The file path to the object's image.
-     */
-    private ImageObject imageObject;
+    private float scale;
 
-    public BgObject(int x, int y, String file) {
+    public BgObject(int x, int y, String file, float scale) {
 
         // Use the position constructor
-        super(new Point(x, y));
+        super(file, new Point(x, y));
 
-        // Set the file
-        imageObject = new ImageObject(file, 0, 0);
+        this.scale = scale;
+
+        // Update the hitbox (or bounding box) immediately - this only ever needs to be done once, because the hit box
+        // is used for detecting when the object is inside the viewport. Do this now so it doesn't need to be done
+        // every iteration of the game engine inside update.
+        this.updateHitBox();
     }
 
-    // ============================================================== //
-    // ================== getters and setters ======================= //
-    // ============================================================== //
-
-    public ImageObject getImageObject() {
-        return imageObject;
-    }
-
-    public void setImageObject(ImageObject imageObject) {
-        this.imageObject = imageObject;
+    @Override
+    public void draw() {
+        super.draw(scale);
     }
 }
