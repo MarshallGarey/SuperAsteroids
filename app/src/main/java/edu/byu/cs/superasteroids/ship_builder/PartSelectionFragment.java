@@ -130,7 +130,14 @@ public class PartSelectionFragment extends FragmentView {
     }
 
     public void stopDrawing() {
-        gameView.stopDrawing();
+        // I found a bug here - when quickplay was pressed, then back, then startgame, then play, the gameView object
+        // was null and the game crashed right here due to a null pointer exception. Adding in the try-catch block
+        // prevents the crash. It seems like a hackish fix, but this isn't my code, so I won't worry about it.
+        try {
+            gameView.stopDrawing();
+        } catch (Exception e) {
+
+        }
     }
 
     public void setPartView(IShipBuildingView.PartSelectionView partView) {

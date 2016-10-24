@@ -12,7 +12,10 @@ public class Viewport {
 
     private static Rect view = null;
 
-    private Viewport() {}
+    private Viewport() {
+        // Initialize to avoid crashing
+        init(0,0);
+    }
 
     /**
      * TODO: move the viewport to stay centered on the ship, as long as it is in the world

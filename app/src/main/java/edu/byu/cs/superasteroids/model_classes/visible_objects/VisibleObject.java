@@ -3,12 +3,8 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
-import android.net.DhcpInfo;
-import android.view.View;
-import android.widget.Toast;
 
 import edu.byu.cs.superasteroids.drawing.DrawingHelper;
-import edu.byu.cs.superasteroids.game.GameActivity;
 
 /**
  * Created by Marshall Garey

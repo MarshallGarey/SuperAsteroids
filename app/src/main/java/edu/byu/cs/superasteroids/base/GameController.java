@@ -44,7 +44,7 @@ public class GameController implements IGameDelegate, IController {
     }
 
     /**
-     * Updates the game delegate. The game engine will call this function 60 times a second
+     * Updates the game delegate. The game engine will call this function 60 times per second
      * once it enters the game loop.
      *
      * @param elapsedTime Time since the last update. For this game, elapsedTime is always
@@ -60,13 +60,13 @@ public class GameController implements IGameDelegate, IController {
 
             // Initialize and move on to the regular game engine
             case STATE_START:
-                AsteroidsGame.getSINGLETON().initLevel();
+                AsteroidsGame.initLevel();
                 state = State_e.STATE_RUN;
                 break;
 
             // Main loop of the game. Just update stuff.
             case STATE_RUN:
-                AsteroidsGame.getSINGLETON().update();
+                AsteroidsGame.update();
                 break;
 
             // New level, need to reload and do things
@@ -89,7 +89,7 @@ public class GameController implements IGameDelegate, IController {
      */
     @Override
     public void loadContent(ContentManager content) {
-        AsteroidsGame.getSINGLETON().loadContent(content);
+        AsteroidsGame.loadContent(content);
     }
 
     /**
@@ -102,18 +102,15 @@ public class GameController implements IGameDelegate, IController {
      */
     @Override
     public void unloadContent(ContentManager content) {
-        AsteroidsGame.getSINGLETON().unloadContent(content);
+        AsteroidsGame.unloadContent(content);
     }
 
     /**
-     * Draws the game delegate. This function will be 60 times a second.
+     * Draws the game delegate. This function will be called 60 times per second.
      */
     @Override
     public void draw() {
-        // Draw the portion of space that we can see in our viewport
-        // viewport.draw
-
         // Ask AsteroidsGame to draw - it will call draw on each object
-        AsteroidsGame.getSINGLETON().draw();
+        AsteroidsGame.draw();
     }
 }

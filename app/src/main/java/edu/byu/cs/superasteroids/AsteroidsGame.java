@@ -195,7 +195,7 @@ public class AsteroidsGame {
      * Loads content of the asteroids game into memory (the activities content manager)
      * @param contentManager A reference to the content manager of the calling class / activity
      */
-    public void loadContent(ContentManager contentManager) {
+    public static void loadContent(ContentManager contentManager) {
         // Load the ship parts:
         ship.loadContent(contentManager);
 
@@ -214,7 +214,7 @@ public class AsteroidsGame {
      * Unloads content of the asteroids game from memory (the activities content manager)
      * @param contentManager A reference to the content manager of the calling class / activity
      */
-    public void unloadContent(ContentManager contentManager) {
+    public static void unloadContent(ContentManager contentManager) {
         // Unload the ship parts
         ship.unloadContent(contentManager);
 
@@ -230,7 +230,7 @@ public class AsteroidsGame {
     /**
      * Draws everything on the screen
      */
-    public void draw() {
+    public static void draw() {
         // Draw the background FIRST
         background.draw();
 
