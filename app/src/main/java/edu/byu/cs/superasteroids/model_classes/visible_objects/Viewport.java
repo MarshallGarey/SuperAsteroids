@@ -3,6 +3,7 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 import android.graphics.PointF;
 import android.graphics.RectF;
 
+import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 
 /**
@@ -12,6 +13,7 @@ import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 public class Viewport {
 
     private static RectF view = null;
+    private static PointF currentViewportPosition = null;
 
     private Viewport() {
         // Initialize to avoid crashing
@@ -22,7 +24,26 @@ public class Viewport {
      * TODO: move the viewport to stay centered on the ship, as long as the entire viewport stays within the world
      */
     public static void update() {
-//        currentViewportPosition = new PointF(AsteroidsGame.getShip().worldPosition);
+        PointF shipPosition = AsteroidsGame.getShip().worldPosition;
+        float screenWidth = DrawingHelper.getGameViewWidth();
+        float screenHeight = DrawingHelper.getGameViewHeight();
+
+        // Only move the viewport in the x direction if it will stay in bounds.
+        if (isInBounds(shipPosition.x, screenWidth, AsteroidsGame.getCurrentLevel().getLevelWidth())) {
+            currentViewportPosition.x = shipPosition.x;
+        }
+
+        // Same thing with the Y direction
+        if (isInBounds(shipPosition.y, screenHeight, AsteroidsGame.getCurrentLevel().getLevelHeight())) {
+            currentViewportPosition.y = shipPosition.y;
+        }
+
+        moveViewport();
+    }
+
+    private static boolean isInBounds(float position, float dimension, float maxValue) {
+        return (((position - dimension / 2) > 0) &&
+                position + dimension / 2 < maxValue);
     }
 
     /**
@@ -35,17 +56,34 @@ public class Viewport {
         // Place the viewport in the center of the world
         float centerX = levelWidth / 2;
         float centerY = levelHeight / 2;
+        currentViewportPosition  = new PointF(centerX, centerY);
+        moveViewport();
 
+//        float screenWidth = DrawingHelper.getGameViewWidth();
+//        float screenHeight = DrawingHelper.getGameViewHeight();
+//
+//        // X coordinates start at the left and go right
+//        float left = centerX - screenWidth / 2;
+//        float right = centerX + screenWidth / 2;
+//
+//        // Y coordinates start at the top and go down
+//        float top = centerY - screenHeight / 2;
+//        float bottom = centerY + screenHeight / 2;
+//
+//        view = new RectF(left, top, right, bottom);
+    }
+
+    private static void moveViewport() {
         float screenWidth = DrawingHelper.getGameViewWidth();
         float screenHeight = DrawingHelper.getGameViewHeight();
 
         // X coordinates start at the left and go right
-        float left = centerX - screenWidth / 2;
-        float right = centerX + screenWidth / 2;
+        float left = currentViewportPosition.x - screenWidth / 2;
+        float right = currentViewportPosition.x + screenWidth / 2;
 
         // Y coordinates start at the top and go down
-        float top = centerY - screenHeight / 2;
-        float bottom = centerY + screenHeight / 2;
+        float top = currentViewportPosition.y - screenHeight / 2;
+        float bottom = currentViewportPosition.y + screenHeight / 2;
 
         view = new RectF(left, top, right, bottom);
     }

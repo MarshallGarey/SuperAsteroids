@@ -243,6 +243,8 @@ public class AsteroidsGame {
         // Draw the ship
         ship.draw();
 
+        // Draw the asteroids
+
         // TODO: draw everything else - asteroids, minimap, projectiles, etc.
     }
 
