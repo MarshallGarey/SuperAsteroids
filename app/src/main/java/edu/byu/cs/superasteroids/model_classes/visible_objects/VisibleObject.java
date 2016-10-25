@@ -132,7 +132,8 @@ public class VisibleObject {
                 worldPosition,
                 hitBox,
                 speed,
-                direction,
+                direction - Math.PI / 2,    // Because the 0 or x axis is up, the direction is 90 degrees off what it
+                                            // should be, so correct the offset when moving the ship
                 elapsedTime);
         hitBox = moveObjectResult.getNewObjBounds();
         worldPosition = moveObjectResult.getNewObjPosition();
