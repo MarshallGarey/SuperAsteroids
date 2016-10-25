@@ -1,9 +1,9 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
-import android.graphics.Point;
+import android.graphics.PointF;
 
 import edu.byu.cs.superasteroids.content.ContentManager;
-import edu.byu.cs.superasteroids.drawing.DrawingHelper;
+import edu.byu.cs.superasteroids.core.GraphicsUtils;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.CannonType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.CoordinateString;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.EngineType;
@@ -50,6 +50,7 @@ public class Ship extends MovingObject {
 
     /**
      * Typical constructor - initialize all the data
+     *
      * @param x         x position
      * @param y         y position
      * @param hp        hit points
@@ -72,16 +73,6 @@ public class Ship extends MovingObject {
         this.powerCore = powerCore;
     }
 
-    @Override
-    public void update() {
-        calculatePartPositions();
-        body.updateHitBox();
-        cannon.updateHitBox();
-        engine.updateHitBox();
-        extraPart.updateHitBox();
-        super.update();
-    }
-
     /**
      * Initialize the ship at the beginning of the game
      */
@@ -90,101 +81,118 @@ public class Ship extends MovingObject {
 
         // Initialize position of the ship in the center of the viewport
         setWorldPosition(Viewport.getView().centerX(), Viewport.getView().centerY());
-        calculatePartPositions();
+
+        // Initialize the positions and bounds (hit box) of all parts of the ship
+        body.worldPosition = this.worldPosition;
+        body.updateHitBox();
+        extraPart.initPartOffsets(body.getExtraAttach(), body);
+        cannon.initPartOffsets(body.getCannonAttach(), body);
+        engine.initPartOffsets(body.getEngineAttach(), body);
+        calculatePartPositions(0);
+        extraPart.updateHitBox();
+        cannon.updateHitBox();
+        engine.updateHitBox();
 
         // Initialize velocity
-        setSpeed(0);
-        setDirection(0);
+        setSpeed(0.0);
+        setDirection(0.0);
     }
 
-    private void calculatePartPositions() {
-        // Body position is the same as the ship position:
-        body.setWorldPosition(worldPosition);
+    /*
+     * TODO: use GraphicsUtils.MoveObject
+     * TODO: change speed so that object will move
+     */
+    public void update(PointF movePoint, double elapsedTime) {
+
+        // Update the angle that we're pointing
+        if (movePoint != null) {
+            direction = calculateAngleInRadians(movePoint);
+        }
+
+        // Move all parts of the ship:
+        calculatePartPositions(direction);
+        speed = 10;
+        body.update(speed, direction, elapsedTime);
+        cannon.update(speed, direction, elapsedTime);
+        extraPart.update(speed, direction, elapsedTime);
+        engine.update(speed, direction, elapsedTime);
+
+        /*
+        body.updateHitBox();
+        cannon.updateHitBox();
+        engine.updateHitBox();
+        extraPart.updateHitBox();
+        super.update();
+        */
+    }
+
+    /*
+     * Returns the angle the ship needs to be (in radians)
+     */
+    private float calculateAngleInRadians(PointF movePoint) {
+//        float diffY = worldPosition.y - movePoint.y; // because Y increases from top to bottom
+        float diffY = movePoint.y - worldPosition.y; // because Y increases from top to bottom
+        float diffX = movePoint.x - worldPosition.x; // because X increases from left to right
+        float angle = (float) (Math.atan2(diffY, diffX) + (Math.PI / 2));
+        return angle;
+    }
+
+    private void calculatePartPositions(float angle) {
+
+        body.worldPosition = this.worldPosition;
 
         // Cannon (right wing) position:
         cannon.setWorldPosition(calculatePartPosition(
-                cannon.getAttachPoint(),
-                cannon.getCenterX(),
-                cannon.getCenterY(),
-                body.getCannonAttach()
+                cannon.getPartOffset(),
+                angle
         ));
 
         // Extra part (left wing) position:
         extraPart.setWorldPosition(calculatePartPosition(
-                extraPart.getAttachPoint(),
-                extraPart.getCenterX(),
-                extraPart.getCenterY(),
-                body.getExtraAttach()
+                extraPart.getPartOffset(),
+                angle
         ));
 
         // Engine position:
         engine.setWorldPosition(calculatePartPosition(
-                engine.getAttachPoint(),
-                engine.getCenterX(),
-                engine.getCenterY(),
-                body.getEngineAttach()
+                engine.getPartOffset(),
+                angle
         ));
     }
 
     /**
      * Computes the attach point for a ship part
      *
-     * @param partAttach  - part attach point
-     * @param partCenterX - part center x point
-     * @param partCenterY - part center Y point
-     * @param shipAttach  - ship attach point
+     * @param angle       - the angle to rotate the part by
      * @return point      - the location the part will be drawn
      */
-    private Point calculatePartPosition(CoordinateString partAttach, int partCenterX, int partCenterY,
-                                        CoordinateString shipAttach) {
+    private PointF calculatePartPosition(PointF partOffset, float angle) {
+        // Find the rotated offset
+        PointF offset = GraphicsUtils.rotate(partOffset, angle);
+
         // Find the X coordinate
-        int partOffsetX = (shipAttach.getxPos() - body.getWidth() / 2) +
-                (partCenterX - partAttach.getxPos());
-        int partLocationX = getWorldPosition().x + (int) ((SCALE) * (float) partOffsetX);
+        float partLocationX = body.getWorldPosition().x + ((SCALE) * offset.x);
 
         // Find the Y coordinate
-        int partOffsetY = (shipAttach.getyPos() - body.getHeight() / 2) +
-                (partCenterY - partAttach.getyPos());
-        int partLocationY = body.getWorldPosition().y + (int) ((SCALE) * (float) partOffsetY);
+        float partLocationY = body.getWorldPosition().y + ((SCALE) * offset.y);
 
-        // Return the point
-        return new Point(partLocationX, partLocationY);
+        return new PointF(partLocationX, partLocationY);
     }
 
     /**
      * Draws the ship
      */
     public void draw() {
-        // TODO: call draw individually on each part of the ship
+        // Call draw individually on each part of the ship
         body.draw();
         cannon.draw();
         engine.draw();
         extraPart.draw();
     }
 
-    // TODO: consider making a single hit box for the ship rather that individual hit boxes for the parts
-//    public void updateHitBox() {
-//        setHeight(getShipHeight());
-//        setWidth(getShipWidth());
-//        setHitBox();
-//    }
-
-    /**
-     * Calculate the width of the ship based on its parts
-     */
-//    public int getShipWidth() {
-//        return extraPart.getImageWidth() + body.getImageWidth() + cannon.getImageWidth();
-//    }
-
-    /**
-     * Calculate the height of the ship based on its parts
-     */
-//    public int getShipHeight() {
-//        return extraPart.getImageHeight() + body.getImageHeight() + cannon.getImageHeight();
-//    }
-
     /**
      * Load the ship images into memory
+     *
      * @param contentManager The content manager of the active activity
      */
     public void loadContent(ContentManager contentManager) {
@@ -208,6 +216,7 @@ public class Ship extends MovingObject {
     public MainBodyType getBody() {
         return body;
     }
+
     public void setBody(MainBodyType body) {
         this.body = body;
     }

@@ -2,6 +2,8 @@ package edu.byu.cs.superasteroids.base;
 
 import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.content.ContentManager;
+import edu.byu.cs.superasteroids.game.InputManager;
+import edu.byu.cs.superasteroids.model_classes.visible_objects.Viewport;
 
 /**
  * Created by Marshall Garey
@@ -13,14 +15,14 @@ public class GameController implements IGameDelegate, IController {
     private State_e state;
 
     private enum State_e {
-        STATE_START,
+        STATE_START_LEVEL,
         STATE_RUN,
         STATE_NEW_LEVEL,
         STATE_END
     }
 
     public GameController() {
-        state = State_e.STATE_START;
+        state = State_e.STATE_START_LEVEL;
     }
 
     /**
@@ -56,17 +58,24 @@ public class GameController implements IGameDelegate, IController {
         /**
          * I use a state machine.
          */
-        switch(state) {
+        switch (state) {
 
             // Initialize and move on to the regular game engine
-            case STATE_START:
+            case STATE_START_LEVEL:
                 AsteroidsGame.initLevel();
                 state = State_e.STATE_RUN;
                 break;
 
             // Main loop of the game. Just update stuff.
+            // TODO: The return value of update should determine whether to stay in this state, go to the next level,
+            // make the ship invincible for a short period of time, or lose the game. I'll have to do something here
+            // to handle when the ship gets hit by an asteroids - if it's dead, lose the game; otherwise, make it
+            // invincible for a short period of time.
             case STATE_RUN:
-                AsteroidsGame.update();
+                // Touch screen coordinates are stored in InputManager.movePoint
+                // I need to convert screen coordinates to world coordinates because the positions of all objects are
+                // stored as world coordinates
+                AsteroidsGame.update(Viewport.screenToWorldCoordinates(InputManager.movePoint), elapsedTime);
                 break;
 
             // New level, need to reload and do things

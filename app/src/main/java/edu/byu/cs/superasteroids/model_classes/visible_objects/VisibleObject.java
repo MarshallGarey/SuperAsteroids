@@ -3,7 +3,10 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.widget.ImageView;
 
+import edu.byu.cs.superasteroids.core.GraphicsUtils;
 import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 
 /**
@@ -25,31 +28,38 @@ public class VisibleObject {
      */
     protected int imageId;
 
+    /**
+     * The angle (in radians) that the object points
+     */
+    protected float direction;
+
     protected int width;
     protected int height;
-    protected Point worldPosition;
-    protected Rect hitBox;
+    protected PointF worldPosition;
+    protected RectF hitBox;
 
     /**
      * Constructor - initialize width and height
-     * @param width     Width of the object
-     * @param height    Height of the object
+     *
+     * @param width  Width of the object
+     * @param height Height of the object
      */
     public VisibleObject(int width, int height) {
         this.width = width;
         this.height = height;
-        worldPosition = new Point(0,0);
+        worldPosition = new PointF(0, 0);
         updateHitBox();
         imageId = IMAGE_NOT_LOADED;
     }
 
     /**
      * Constructor - initialize position
+     *
      * @param worldPosition Initial position - (x,y) coordinates
      */
     public VisibleObject(Point worldPosition) {
-        this.worldPosition = new Point(worldPosition);
-        this.hitBox = new Rect();
+        this.worldPosition = new PointF(worldPosition);
+        this.hitBox = new RectF();
         this.imageId = IMAGE_NOT_LOADED;
         this.width = 0;
         this.height = 0;
@@ -60,29 +70,38 @@ public class VisibleObject {
      * Default Constructor - do nothing, let the caller initialize everything by hand
      * TODO: get rid of this?
      */
-    public VisibleObject() {}
+    public VisibleObject() {
+    }
 
     /**
      * Draws the object at the appropriate place in the viewport based on its world position.
      * Does not draw the object if it is not in the viewport;
      * in other words, if the user cannot see it, there is no need to draw it.
-     * TODO: get screen x and y positions by getting the viewport and world
      */
     public void draw() {
         // Test if the viewport intersects with the object, then translate the world coordinates to screen
         // coordinates, then draw.
-        if (Rect.intersects(Viewport.getView(), this.getHitBox())) {
+        if (RectF.intersects(Viewport.getView(), this.getHitBox())) {
             PointF pointf = translateToScreenCoordinates();
-            DrawingHelper.drawImage(imageId, pointf.x, pointf.y, 0, SCALE, SCALE, OPAQUE);
+            DrawingHelper.drawImage(
+                    imageId,
+                    pointf.x,
+                    pointf.y,
+                    (float)Math.toDegrees((double)direction),
+                    SCALE, SCALE, OPAQUE);
         }
     }
 
     /**
      * Draws the portion of the image that intersects with the passed rectangle.
-     * @param imagePortion  The rectangle (in image coordinates) that represents the portion of the image to be drawn.
+     *
+     * @param imagePortion The rectangle (in image coordinates) that represents the portion of the image to be drawn.
      */
-    public void drawPartial(Rect imagePortion) {
-        DrawingHelper.drawImage(imageId, imagePortion, null);
+    public void drawPartial(RectF imagePortion) {
+        DrawingHelper.drawImage(imageId,
+                new Rect((int) imagePortion.left, (int) imagePortion.top,
+                        (int) imagePortion.right, (int) imagePortion.bottom),
+                null);
     }
 
     /**
@@ -103,13 +122,24 @@ public class VisibleObject {
 
     /**
      * Updates the position and hit box of the object based on its speed and direction
-     * @param speed     How fast the object is moving
-     * @param direction What direction the object is moving
+     * @param speed         How fast the object is moving
+     * @param direction     What direction the object is moving
+     * @param elapsedTime   How much time elapsed since the last update
      */
-    public void updatePosition(int speed, float direction) {
-        // TODO: Update position
-
-        updateHitBox();
+    public void update(double speed, float direction, double elapsedTime) {
+        this.direction = direction;
+//        PointF screenPosition = translateToScreenCoordinates();
+//        screenPosition = GraphicsUtils.rotate(screenPosition, direction);
+//        worldPosition = Viewport.screenToWorldCoordinates(screenPosition);
+//        worldPosition = GraphicsUtils.rotate(worldPosition, direction);
+        GraphicsUtils.MoveObjectResult moveObjectResult = GraphicsUtils.moveObject(
+                worldPosition,
+                hitBox,
+                speed,
+                direction,
+                elapsedTime);
+        hitBox = moveObjectResult.getNewObjBounds();
+        worldPosition = moveObjectResult.getNewObjPosition();
     }
 
     /**
@@ -118,20 +148,21 @@ public class VisibleObject {
      * x,y are the center of the image, so divide width and height by 2 and add to x,y to get left, top, right, bottom
      */
     public void updateHitBox() {
-        int left = worldPosition.x - width / 2;
-        int right = worldPosition.x + width / 2;
-        int top = worldPosition.y - height / 2;
-        int bottom = worldPosition.y + height / 2;
-        hitBox = new Rect(left, top, right, bottom);
+        float left = worldPosition.x - width / 2;
+        float right = worldPosition.x + width / 2;
+        float top = worldPosition.y - height / 2;
+        float bottom = worldPosition.y + height / 2;
+        hitBox = new RectF(left, top, right, bottom);
     }
 
     /**
      * Translate the objects world (x,y) coordinates to screen coordinates
+     *
      * @return The screen coordinates
      */
     private PointF translateToScreenCoordinates() {
-        float screenX = (float) (worldPosition.x - Viewport.getView().left);
-        float screenY = (float) (worldPosition.y - Viewport.getView().top);
+        float screenX = worldPosition.x - Viewport.getView().left;
+        float screenY = worldPosition.y - Viewport.getView().top;
         return new PointF(screenX, screenY);
     }
 
@@ -163,24 +194,24 @@ public class VisibleObject {
         this.height = height;
     }
 
-    public Point getWorldPosition() {
+    public PointF getWorldPosition() {
         return worldPosition;
     }
 
-    public void setWorldPosition(Point worldPosition) {
+    public void setWorldPosition(PointF worldPosition) {
         this.worldPosition = worldPosition;
     }
 
-    public void setWorldPosition(int x, int y) {
+    public void setWorldPosition(float x, float y) {
         this.worldPosition.x = x;
         this.worldPosition.y = y;
     }
 
-    public Rect getHitBox() {
+    public RectF getHitBox() {
         return hitBox;
     }
 
-    public void setHitBox(Rect hitBox) {
+    public void setHitBox(RectF hitBox) {
         this.hitBox = hitBox;
     }
 }

@@ -10,31 +10,18 @@ public class MovingObject extends VisibleObject {
     /**
      * The speed at which the object is moving.
      */
-    private int speed;
-
-    /**
-     * The direction in which the object is moving.
-     */
-    private float direction;
+    protected double speed;
 
     /**
      * The object's current hit points.
      */
-    private int hp;
+    protected int hp;
 
     public MovingObject(int x, int y, int hp, int speed, float direction) {
         super(x, y);
         this.hp = hp;
         this.speed = speed;
         this.direction = direction;
-    }
-
-    /**
-     * Updates the position of the image (world (x,y) coordinates)
-     */
-    public void update() {
-        // update x and y based on the direction and speed it's going and redraw the object
-        updatePosition(speed, direction);
     }
 
     /**
@@ -48,11 +35,11 @@ public class MovingObject extends VisibleObject {
     // Getters and setters --------------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------------------------------
 
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
-    public void setSpeed(int speed) {
+    public void setSpeed(double speed) {
         this.speed = speed;
     }
 
@@ -60,8 +47,8 @@ public class MovingObject extends VisibleObject {
         return direction;
     }
 
-    public void setDirection(int direction) {
-        this.direction = direction;
+    public void setDirection(double direction) {
+        this.direction = (float)direction;
     }
 
     public int getHp() {

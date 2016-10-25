@@ -1,6 +1,7 @@
 package edu.byu.cs.superasteroids;
 
 import android.content.Context;
+import android.graphics.PointF;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -248,14 +249,13 @@ public class AsteroidsGame {
     /**
      * Updates all objects in the game.
      */
-    public static void update() {
+    public static void update(PointF movePoint, double elapsedTime) {
 
         // Update the viewport first, because all other objects are drawn relative to it.
         Viewport.update();
 
-        // Update the ship.
-        ship.update();
-
+        // Update the ship
+        ship.update(movePoint, elapsedTime);
     }
 
     /**
@@ -284,6 +284,11 @@ public class AsteroidsGame {
             }
         }
         return levels.get(0);
+    }
+
+
+    public static Level getCurrentLevel() {
+        return getLevel(currentLevelNumber);
     }
 
     /**

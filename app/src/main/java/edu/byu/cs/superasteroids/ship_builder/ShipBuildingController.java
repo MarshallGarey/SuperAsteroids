@@ -2,6 +2,7 @@ package edu.byu.cs.superasteroids.ship_builder;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.opengl.ETC1;
 import android.widget.Toast;
 
@@ -273,7 +274,7 @@ public class ShipBuildingController implements IShipBuildingController {
         Ship ship = AsteroidsGame.getShip();
         if (ship.getBody() == null)
             return false; // don't draw if a body hasn't been selected yet
-        ship.setWorldPosition(new Point(
+        ship.setWorldPosition(new PointF(
                 DrawingHelper.getGameViewWidth() / 2,
                 DrawingHelper.getGameViewHeight() / 2
         ));
@@ -293,7 +294,7 @@ public class ShipBuildingController implements IShipBuildingController {
             return; // don't draw if a cannon hasn't been selected yet
         CannonType cannon = ship.getCannon();
         int id = cannon.getImageId();
-        Point point = computeAttach(
+        PointF point = computeAttach(
                 cannon.getAttachPoint(), // part attach point
                 cannon.getWidth() / 2, // part center x point
                 cannon.getHeight() / 2, // part center Y point
@@ -311,7 +312,7 @@ public class ShipBuildingController implements IShipBuildingController {
             return; // don't draw if an engine hasn't been selected yet
         EngineType engine = ship.getEngine();
         int id = engine.getImageId();
-        Point point = computeAttach(
+        PointF point = computeAttach(
                 engine.getAttachPoint(), // part attach point
                 engine.getWidth() / 2, // part center x point
                 engine.getHeight() / 2, // part center Y point
@@ -329,7 +330,7 @@ public class ShipBuildingController implements IShipBuildingController {
             return; // don't draw if an extra part hasn't been selected yet
         ExtraPartType extraPart = ship.getExtraPart();
         int id = extraPart.getImageId();
-        Point point = computeAttach(
+        PointF point = computeAttach(
                 extraPart.getAttachPoint(), // part attach point
                 extraPart.getWidth() / 2, // part center x point
                 extraPart.getHeight() / 2, // part center Y point
@@ -351,20 +352,20 @@ public class ShipBuildingController implements IShipBuildingController {
      * @param ship        - pointer to ship
      * @return point      - the location the part will be drawn
      */
-    private Point computeAttach(CoordinateString partAttach, int partCenterX, int partCenterY,
+    private PointF computeAttach(CoordinateString partAttach, int partCenterX, int partCenterY,
                                 CoordinateString shipAttach, Ship ship) {
         // Find the X coordinate
         int partOffsetX = (shipAttach.getxPos() - ship.getBody().getWidth() / 2) +
                 (partCenterX - partAttach.getxPos());
-        int partLocationX = ship.getWorldPosition().x + (int) ((SCALE) * (float) partOffsetX);
+        float partLocationX = ship.getWorldPosition().x + ((SCALE) * (float) partOffsetX);
 
         // Find the Y coordinate
         int partOffsetY = (shipAttach.getyPos() - ship.getBody().getHeight() / 2) +
                 (partCenterY - partAttach.getyPos());
-        int partLocationY = ship.getWorldPosition().y + (int) ((SCALE) * (float) partOffsetY);
+        float partLocationY = ship.getWorldPosition().y + ((SCALE) * (float) partOffsetY);
 
         // Return the point
-        return new Point(partLocationX, partLocationY);
+        return new PointF(partLocationX, partLocationY);
     }
 
     /**
