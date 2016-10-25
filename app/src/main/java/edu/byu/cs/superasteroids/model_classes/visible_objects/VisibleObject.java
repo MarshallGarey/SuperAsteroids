@@ -128,10 +128,6 @@ public class VisibleObject {
      */
     public void update(double speed, float direction, double elapsedTime) {
         this.direction = direction;
-//        PointF screenPosition = translateToScreenCoordinates();
-//        screenPosition = GraphicsUtils.rotate(screenPosition, direction);
-//        worldPosition = Viewport.screenToWorldCoordinates(screenPosition);
-//        worldPosition = GraphicsUtils.rotate(worldPosition, direction);
         GraphicsUtils.MoveObjectResult moveObjectResult = GraphicsUtils.moveObject(
                 worldPosition,
                 hitBox,
@@ -157,7 +153,6 @@ public class VisibleObject {
 
     /**
      * Translate the objects world (x,y) coordinates to screen coordinates
-     *
      * @return The screen coordinates
      */
     private PointF translateToScreenCoordinates() {

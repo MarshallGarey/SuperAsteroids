@@ -107,11 +107,13 @@ public class Ship extends MovingObject {
         // Update the angle that we're pointing
         if (movePoint != null) {
             direction = calculateAngleInRadians(movePoint);
+            speed = GraphicsUtils.distance(movePoint, worldPosition);
+        } else {
+            speed = 0;
         }
 
         // Move all parts of the ship:
         calculatePartPositions(direction);
-        speed = 10;
         body.update(speed, direction, elapsedTime);
         cannon.update(speed, direction, elapsedTime);
         extraPart.update(speed, direction, elapsedTime);
@@ -133,13 +135,10 @@ public class Ship extends MovingObject {
 //        float diffY = worldPosition.y - movePoint.y; // because Y increases from top to bottom
         float diffY = movePoint.y - worldPosition.y; // because Y increases from top to bottom
         float diffX = movePoint.x - worldPosition.x; // because X increases from left to right
-        float angle = (float) (Math.atan2(diffY, diffX) + (Math.PI / 2));
-        return angle;
+        return (float) (Math.atan2(diffY, diffX) + (Math.PI / 2));
     }
 
     private void calculatePartPositions(float angle) {
-
-        body.worldPosition = this.worldPosition;
 
         // Cannon (right wing) position:
         cannon.setWorldPosition(calculatePartPosition(
