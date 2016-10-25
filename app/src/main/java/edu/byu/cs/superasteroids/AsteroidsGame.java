@@ -35,6 +35,8 @@ public class AsteroidsGame {
      */
     public static AsteroidsGame SINGLETON = new AsteroidsGame();
 
+    private static Context gameContext;
+
     private final static String BACKGROUND_IMAGE_FILE = "images/space.bmp";
 
     /**
@@ -119,12 +121,17 @@ public class AsteroidsGame {
      */
     private AsteroidsGame() {}
 
+    public static void initAsteroidsGame() {
+        initAsteroidsGame(gameContext);
+    }
+
     /**
      * Import all game data
      * TODO: there's a bug - the game crashes if I start the game, then press back, then select a new part of the
      * ship, then click start again. Look for references to this method (initAsteroidsGame) and also startActivity(game)
      */
     public static void initAsteroidsGame(Context context) {
+        gameContext = context;
         // Open the database
         database = new Database(context);
 
@@ -204,6 +211,7 @@ public class AsteroidsGame {
         background.loadContent(contentManager);
 
         // Load the background objects
+        initBgObjects();
         for (BgObject object : bgObjects) {
             object.loadImage(contentManager);
         }

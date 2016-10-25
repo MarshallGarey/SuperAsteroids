@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.R;
 
 public class ImportActivity extends ActionBarActivity {
@@ -92,11 +93,13 @@ public class ImportActivity extends ActionBarActivity {
                     boolean success = dataImporter.importData(new InputStreamReader(
                             new BufferedInputStream(am.open(fileList.get(i)))));
 
-                    if (success)
+                    if (success) {
                         toast.setText("The file was imported.");
-                    else
+                        AsteroidsGame.initAsteroidsGame(); // this instances game data from the database
+                    }
+                    else {
                         toast.setText("An error occurred as the importer tried to import the file.");
-
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     toast.setText("The file could not be imported, because it does not exist.");
