@@ -112,20 +112,17 @@ public class Ship extends MovingObject {
             speed = 0;
         }
 
-        // Move all parts of the ship:
+        // Figure out the positions of the attachments of the ship.
         calculatePartPositions(direction);
+
+        // Move all parts of the ship. This also updates the hit box.
         body.update(speed, direction, elapsedTime);
         cannon.update(speed, direction, elapsedTime);
         extraPart.update(speed, direction, elapsedTime);
         engine.update(speed, direction, elapsedTime);
 
-        /*
-        body.updateHitBox();
-        cannon.updateHitBox();
-        engine.updateHitBox();
-        extraPart.updateHitBox();
-        super.update();
-        */
+        // Make the ship's position the same as the body position
+        worldPosition = body.worldPosition;
     }
 
     /*
@@ -133,8 +130,8 @@ public class Ship extends MovingObject {
      */
     private float calculateAngleInRadians(PointF movePoint) {
 //        float diffY = worldPosition.y - movePoint.y; // because Y increases from top to bottom
-        float diffY = movePoint.y - worldPosition.y; // because Y increases from top to bottom
-        float diffX = movePoint.x - worldPosition.x; // because X increases from left to right
+        float diffY = movePoint.y - body.worldPosition.y; // because Y increases from top to bottom
+        float diffX = movePoint.x - body.worldPosition.x; // because X increases from left to right
         return (float) (Math.atan2(diffY, diffX) + (Math.PI / 2));
     }
 
