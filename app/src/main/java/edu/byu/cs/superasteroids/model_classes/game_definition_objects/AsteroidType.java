@@ -1,5 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
+import android.graphics.PointF;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,14 +19,19 @@ public class AsteroidType extends ImageObject {
     public AsteroidType(JSONObject obj) throws JSONException {
         super(obj.getString("image"),
                 obj.getInt("imageWidth"),
-                obj.getInt("imageHeight"));
+                obj.getInt("imageHeight"),
+                1);
         type = obj.getString("type");
     }
 
     public AsteroidType(String file, int width, int height, String type) {
-        super(file, width, height);
+        super(file, width, height, 1);
         this.type = type;
     }
+
+    // ----------------------------------------------------------------------------------------------------------------
+    // Getters and setters --------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
 
     public String getType() {
         return type;

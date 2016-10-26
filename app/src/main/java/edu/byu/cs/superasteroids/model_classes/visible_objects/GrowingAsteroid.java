@@ -14,13 +14,12 @@ public class GrowingAsteroid extends Asteroid {
      */
     private final int MAX_SIZE = 0;
 
-    public GrowingAsteroid(int x, int y, int hp, int speed, float direction, AsteroidType type,
-                           int numTimesSplit) {
-        super(x, y, hp, speed, direction, type, numTimesSplit);
+    public GrowingAsteroid(AsteroidType type, int levelWidth, int levelHeight) {
+        super(type, levelWidth, levelHeight);
     }
 
     /**
-     * Makes the asteroid get bigger.
+     * TODO: Makes the asteroid get bigger. While increasing the scale, the hit box also needs to grow
      */
     public void grow() {
 

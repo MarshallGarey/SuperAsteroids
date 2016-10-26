@@ -1,5 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
+import android.graphics.PointF;
+
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ProjectileType;
 
 /**
@@ -13,9 +15,10 @@ public class Projectile extends MovingObject{
      */
     private ProjectileType projectileType;
 
-    public Projectile(int x, int y, int hp, int speed, float direction,
+    public Projectile(float x, float y, double speed, float direction,
                       ProjectileType projectileType) {
-        super(x, y, hp, speed, direction);
+        super(new PointF(x,y), speed, direction);
+        this.hp = 1;
         this.projectileType = projectileType;
     }
 

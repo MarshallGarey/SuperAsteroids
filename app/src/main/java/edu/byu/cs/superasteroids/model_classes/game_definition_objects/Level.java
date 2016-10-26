@@ -174,14 +174,14 @@ public class Level {
         levelHeight = elem.getInt("height");
         music = elem.getString("music");
         // Get levelObjects
-        levelObjects = new ArrayList<LevelObject>();
+        levelObjects = new ArrayList<>();
         JSONArray objects = elem.getJSONArray("levelObjects");
         for (int i = 0; i < objects.length(); i++) {
             JSONObject levelObj = objects.getJSONObject(i);
             levelObjects.add(i, new LevelObject(levelObj));
         }
         // Get levelAsteroids
-        levelAsteroids = new ArrayList<LevelAsteroid>();
+        levelAsteroids = new ArrayList<>();
         objects = elem.getJSONArray("levelAsteroids");
         for (int i = 0; i < objects.length(); i++) {
             JSONObject asteroidObj = objects.getJSONObject(i);

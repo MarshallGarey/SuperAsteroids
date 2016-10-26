@@ -1,5 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
+import edu.byu.cs.superasteroids.model_classes.visible_objects.Ship;
+
 /**
  * Created by Marshall Garey
  * Contains information about the type of a main body for the ship.
@@ -29,7 +31,7 @@ public class MainBodyType extends ShipPart {
 
     public MainBodyType(String file, int width, int height, int id, String cannonAttachPoint,
                         String engineAttachPoint, String extraPartAttachPoint) {
-        super(file, width, height);
+        super(file, width, height, Ship.SHIP_SCALE);
         this.id = id;
         this.cannonAttach = new CoordinateString(cannonAttachPoint);
         this.engineAttach = new CoordinateString(engineAttachPoint);

@@ -18,6 +18,7 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.PowerCore
 public class Ship extends MovingObject {
 
     private final int MAX_HP = 5;
+    public static final float SHIP_SCALE = (float)0.2;
 
     public int getMAX_HP() {
         return MAX_HP;
@@ -65,7 +66,8 @@ public class Ship extends MovingObject {
     public Ship(int x, int y, int hp, int speed, float direction, MainBodyType body,
                 CannonType cannon, EngineType engine, ExtraPartType extraPart,
                 PowerCoreType powerCore) {
-        super(x, y, hp, speed, direction);
+        super(new PointF(x,y), speed, direction);
+        this.hp = hp;
         this.body = body;
         this.cannon = cannon;
         this.engine = engine;
@@ -99,15 +101,15 @@ public class Ship extends MovingObject {
     }
 
     /*
-     * TODO: use GraphicsUtils.MoveObject
-     * TODO: change speed so that object will move
+     * TODO: speed should probably depend on the power core as well as the distance from the touch point (don't move
+     * if you're at or close to the touch point)
      */
     public void update(PointF movePoint, double elapsedTime) {
 
         // Update the angle that we're pointing
         if (movePoint != null) {
             direction = calculateAngleInRadians(movePoint);
-            speed = GraphicsUtils.distance(movePoint, worldPosition);
+            speed = engine.getBaseSpeed(); // GraphicsUtils.distance(movePoint, worldPosition);
         } else {
             speed = 0;
         }
@@ -167,10 +169,10 @@ public class Ship extends MovingObject {
         PointF offset = GraphicsUtils.rotate(partOffset, angle);
 
         // Find the X coordinate
-        float partLocationX = body.getWorldPosition().x + ((SCALE) * offset.x);
+        float partLocationX = body.getWorldPosition().x + ((SHIP_SCALE) * offset.x);
 
         // Find the Y coordinate
-        float partLocationY = body.getWorldPosition().y + ((SCALE) * offset.y);
+        float partLocationY = body.getWorldPosition().y + ((SHIP_SCALE) * offset.y);
 
         return new PointF(partLocationX, partLocationY);
     }

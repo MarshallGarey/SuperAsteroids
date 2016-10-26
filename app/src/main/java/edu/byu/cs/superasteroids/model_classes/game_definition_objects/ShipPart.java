@@ -8,7 +8,7 @@ package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 public class ShipPart extends ImageObject {
 
     // Initialize fields common to ImageObject
-    public ShipPart(String file, int width, int height) {
-        super(file, width, height);
+    public ShipPart(String file, int width, int height, float scale) {
+        super(file, width, height, scale);
     }
 }

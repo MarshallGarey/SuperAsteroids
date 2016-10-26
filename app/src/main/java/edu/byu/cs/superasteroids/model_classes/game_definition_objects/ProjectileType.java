@@ -1,5 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
+import edu.byu.cs.superasteroids.model_classes.visible_objects.Ship;
+
 /**
  * Created by Marshall Garey
  * Contains information about the type of projectile that corresponds to a specific type of cannon.
@@ -19,7 +21,7 @@ public class ProjectileType extends ImageObject {
 
     // Initializes all info about the type of projectile.
     public ProjectileType(String image, int width, int height, String attackSoundFile, int damage) {
-        super(image, width, height);
+        super(image, width, height, Ship.SHIP_SCALE); // TODO: scale this correctly
         this.attackSoundFile = attackSoundFile;
         this.damage = damage;
     }

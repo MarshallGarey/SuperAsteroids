@@ -4,7 +4,6 @@ import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.widget.ImageView;
 
 import edu.byu.cs.superasteroids.core.GraphicsUtils;
 import edu.byu.cs.superasteroids.drawing.DrawingHelper;
@@ -16,8 +15,6 @@ import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 public class VisibleObject {
 
     // Constants:
-
-    protected final float SCALE = (float) 0.2;
     private final int OPAQUE = 255;
     private final int TRANSPARENT = 0;
     private final int IMAGE_NOT_LOADED = -1;
@@ -33,6 +30,7 @@ public class VisibleObject {
      */
     protected float direction;
 
+    protected float scale;
     protected int width;
     protected int height;
     protected PointF worldPosition;
@@ -44,12 +42,13 @@ public class VisibleObject {
      * @param width  Width of the object
      * @param height Height of the object
      */
-    public VisibleObject(int width, int height) {
+    public VisibleObject(int width, int height, float scale) {
         this.width = width;
         this.height = height;
         worldPosition = new PointF(0, 0);
         updateHitBox();
         imageId = IMAGE_NOT_LOADED;
+        this.scale = scale;
     }
 
     /**
@@ -57,18 +56,18 @@ public class VisibleObject {
      *
      * @param worldPosition Initial position - (x,y) coordinates
      */
-    public VisibleObject(Point worldPosition) {
-        this.worldPosition = new PointF(worldPosition);
+    public VisibleObject(PointF worldPosition, float scale) {
+        this.worldPosition = worldPosition;
         this.hitBox = new RectF();
         this.imageId = IMAGE_NOT_LOADED;
         this.width = 0;
         this.height = 0;
         updateHitBox();
+        this.scale = scale;
     }
 
     /**
      * Default Constructor - do nothing, let the caller initialize everything by hand
-     * TODO: get rid of this?
      */
     public VisibleObject() {
     }
@@ -88,7 +87,7 @@ public class VisibleObject {
                     pointf.x,
                     pointf.y,
                     (float)Math.toDegrees((double)direction),
-                    SCALE, SCALE, OPAQUE);
+                    scale, scale, OPAQUE);
         }
     }
 
@@ -105,7 +104,7 @@ public class VisibleObject {
     }
 
     /**
-     * Draws an image
+     * Draws an image without checking if it is in the viewport.
      * @param scale How much to scale the image by.
      */
     public void draw(float scale) {
@@ -117,7 +116,7 @@ public class VisibleObject {
      * Draws the object, assuming that its (x,y) world coordinates are the same as screen coordinates.
      */
     public void drawAbsolutePosition() {
-        DrawingHelper.drawImage(imageId, worldPosition.x, worldPosition.y, 0, SCALE, SCALE, OPAQUE);
+        DrawingHelper.drawImage(imageId, worldPosition.x, worldPosition.y, 0, scale, scale, OPAQUE);
     }
 
     /**

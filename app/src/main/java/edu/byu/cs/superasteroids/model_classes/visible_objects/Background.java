@@ -32,7 +32,7 @@ public class Background extends VisibleObject {
     public Background(String backgroundImage, int worldWidth, int worldHeight) {
         widthScale = worldWidth / BGIMAGE_WIDTH;
         heightScale = worldHeight / BGIMAGE_HEIGHT;
-        this.backgroundImage = new ImageObject(backgroundImage, BGIMAGE_WIDTH, BGIMAGE_HEIGHT);
+        this.backgroundImage = new ImageObject(backgroundImage, BGIMAGE_WIDTH, BGIMAGE_HEIGHT, 1);
     }
 
     /**

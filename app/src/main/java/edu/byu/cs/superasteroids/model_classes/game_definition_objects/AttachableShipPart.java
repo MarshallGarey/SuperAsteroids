@@ -2,6 +2,8 @@ package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
 import android.graphics.PointF;
 
+import edu.byu.cs.superasteroids.model_classes.visible_objects.Ship;
+
 /**
  * Created by Marshall Garey
  * Contains information common to all ship parts that attach to the main body. This
@@ -20,7 +22,7 @@ public class AttachableShipPart extends ShipPart {
 
     // Initializes data
     public AttachableShipPart(String file, int width, int height, String attachPoint) {
-        super(file, width, height);
+        super(file, width, height, Ship.SHIP_SCALE);
         this.attachPoint = new CoordinateString(attachPoint);
         partOffset = new PointF(0,0);
     }

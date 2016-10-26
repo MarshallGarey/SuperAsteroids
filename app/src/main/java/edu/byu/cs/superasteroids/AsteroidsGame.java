@@ -30,11 +30,6 @@ import edu.byu.cs.superasteroids.model_classes.visible_objects.Viewport;
  */
 public class AsteroidsGame {
 
-    /**
-     * Handle for other classes to be able to access game data
-     */
-    public static AsteroidsGame SINGLETON = new AsteroidsGame();
-
     private static Context gameContext;
 
     private final static String BACKGROUND_IMAGE_FILE = "images/space.bmp";
@@ -48,6 +43,8 @@ public class AsteroidsGame {
      * a list of types of asteroids in the game
      */
     private static ArrayList<AsteroidType> asteroidTypes;
+
+    private static ArrayList<Integer> asteroidTypeIndices;
 
     /**
      * a list of background object types in the game
@@ -92,9 +89,9 @@ public class AsteroidsGame {
     private static ArrayList<PowerCoreType> powerCoreTypes;
 
     /**
-     * list of all asteroids in the game - key is id, value is the asteroid
+     * list of all asteroids in the level
      */
-    private static HashMap<Integer, Asteroid> asteroids;
+    private static ArrayList<Asteroid> asteroids;
 
     /**
      * the game's minimap
@@ -181,6 +178,13 @@ public class AsteroidsGame {
 
         // Initialize the list of background objects for the current level.
         initBgObjects();
+
+        // Since I'm not getting the asteroid types in the same order as I read them in the JSON, I'm reordering them
+        // like this. It's silly but works as a temporary fix. TODO: hopefully fix this correctly
+        asteroidTypeIndices = new ArrayList<>();
+        asteroidTypeIndices.add(2);  // growing
+        asteroidTypeIndices.add(1);  // octeroid
+        asteroidTypeIndices.add(0);  // regular
     }
 
     /**
@@ -203,6 +207,26 @@ public class AsteroidsGame {
     }
 
     /**
+     * Initialize the asteroids in the level.
+     * Get the asteroids in the level by getting the level and looking at levelAsteroids. This tells me how many and
+     * the type - well, it's the ID, but use the ID - 1 to index into the AsteroidTypes array to know which type.
+     * I need to initialize them in random positions, making sure they don't spawn on the ship, and give them random
+     * velocities. Make an init function in the Asteroid class.
+     */
+    private static void initAsteroids(Level level) {
+        asteroids = new ArrayList<>();
+        for (Level.LevelAsteroid levelAsteroid : level.getLevelAsteroids()) {
+            int typeIndex = asteroidTypeIndices.get(levelAsteroid.getAsteroidID() - 1);
+            // Add one asteroid for each
+            for (int i = levelAsteroid.getAsteroidNumber(); i > 0; --i) {
+                asteroids.add(new Asteroid(
+                        asteroidTypes.get(typeIndex), level.getLevelWidth(), level.getLevelHeight()
+                ));
+            }
+        }
+    }
+
+    /**
      * Loads content of the asteroids game into memory (the activities content manager)
      * @param contentManager A reference to the content manager of the calling class / activity
      */
@@ -217,6 +241,11 @@ public class AsteroidsGame {
         initBgObjects();
         for (BgObject object : bgObjects) {
             object.loadImage(contentManager);
+        }
+
+        // Load the asteroid types
+        for (AsteroidType asteroidType : asteroidTypes) {
+            asteroidType.loadImage(contentManager);
         }
 
         // TODO: load other content
@@ -237,6 +266,13 @@ public class AsteroidsGame {
         for (BgObject object : bgObjects) {
             object.unloadImage(contentManager);
         }
+
+        // Unload the asteroid types
+        for (AsteroidType asteroidType : asteroidTypes) {
+            asteroidType.unloadImage(contentManager);
+        }
+
+        // TODO: unload other content
     }
 
     /**
@@ -255,6 +291,9 @@ public class AsteroidsGame {
         ship.draw();
 
         // Draw the asteroids
+        for (Asteroid asteroid : asteroids) {
+            asteroid.draw();
+        }
 
         // TODO: draw everything else - asteroids, minimap, projectiles, etc.
     }
@@ -275,13 +314,15 @@ public class AsteroidsGame {
      * Initialize the ship, asteroids, etc. at the beginning of the level
      */
     public static void initLevel() {
-        // Initialize the viewport
+        // Initialize the viewport for the current level.
         Level level = getLevel(currentLevelNumber);
-
         Viewport.init(level.getLevelWidth(), level.getLevelHeight());
 
-        // Initialize the ship
+        // Initialize the ship.
         ship.init();
+
+        // Initialize the asteroids for the current level.
+        initAsteroids(level);
     }
 
     /**
@@ -350,10 +391,6 @@ public class AsteroidsGame {
     // ================== getters and setters ======================= //
     // ============================================================== //
 
-    public static AsteroidsGame getSINGLETON() {
-        return SINGLETON;
-    }
-
     public static Database getDatabase() {
         return database;
     }
@@ -362,84 +399,24 @@ public class AsteroidsGame {
         AsteroidsGame.database = database;
     }
 
-    public static ArrayList<AsteroidType> getAsteroidTypes() {
-        return asteroidTypes;
-    }
-
-    public static void setAsteroidTypes(ArrayList<AsteroidType> asteroidTypes) {
-        AsteroidsGame.asteroidTypes = asteroidTypes;
-    }
-
-    public static ArrayList<String> getBgObjectTypes() {
-        return bgObjectTypes;
-    }
-
-    public static void setBgObjectTypes(ArrayList<String> bgObjectTypes) {
-        AsteroidsGame.bgObjectTypes = bgObjectTypes;
-    }
-
-    public static ArrayList<Level> getLevels() {
-        return levels;
-    }
-
-    public static void setLevels(ArrayList<Level> levels) {
-        AsteroidsGame.levels = levels;
-    }
-
     public static ArrayList<CannonType> getCannons() {
         return cannons;
-    }
-
-    public static void setCannons(ArrayList<CannonType> cannons) {
-        AsteroidsGame.cannons = cannons;
     }
 
     public static ArrayList<EngineType> getEngines() {
         return engines;
     }
 
-    public static void setEngines(ArrayList<EngineType> engines) {
-        AsteroidsGame.engines = engines;
-    }
-
     public static ArrayList<ExtraPartType> getExtraPartTypes() {
         return extraPartTypes;
-    }
-
-    public static void setExtraPartTypes(ArrayList<ExtraPartType> extraPartTypes) {
-        AsteroidsGame.extraPartTypes = extraPartTypes;
     }
 
     public static ArrayList<MainBodyType> getMainBodies() {
         return mainBodies;
     }
 
-    public static void setMainBodies(ArrayList<MainBodyType> mainBodies) {
-        AsteroidsGame.mainBodies = mainBodies;
-    }
-
     public static ArrayList<PowerCoreType> getPowerCoreTypes() {
         return powerCoreTypes;
-    }
-
-    public static void setPowerCoreTypes(ArrayList<PowerCoreType> powerCoreTypes) {
-        AsteroidsGame.powerCoreTypes = powerCoreTypes;
-    }
-
-    public static HashMap<Integer, Asteroid> getAsteroids() {
-        return asteroids;
-    }
-
-    public static void setAsteroids(HashMap<Integer, Asteroid> asteroids) {
-        AsteroidsGame.asteroids = asteroids;
-    }
-
-    public static MiniMap getMiniMap() {
-        return miniMap;
-    }
-
-    public static void setMiniMap(MiniMap miniMap) {
-        AsteroidsGame.miniMap = miniMap;
     }
 
     public static Ship getShip() {
@@ -448,13 +425,5 @@ public class AsteroidsGame {
 
     public static void setShip(Ship ship) {
         AsteroidsGame.ship = ship;
-    }
-
-    public static HashMap<Integer, Projectile> getProjectiles() {
-        return projectiles;
-    }
-
-    public static void setProjectiles(HashMap<Integer, Projectile> projectiles) {
-        AsteroidsGame.projectiles = projectiles;
     }
 }

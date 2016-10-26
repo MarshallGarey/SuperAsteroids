@@ -7,8 +7,7 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.AsteroidT
  * Octeroids split into 8 pieces when they are destroyed.
  */
 public class Octeroid extends Asteroid {
-    public Octeroid(int x, int y, int hp, int speed, float direction,
-                    AsteroidType type, int numTimesSplit) {
-        super(x, y, hp, speed, direction, type, numTimesSplit);
+    public Octeroid(AsteroidType type, int levelWidth, int levelHeight) {
+        super(type, levelWidth, levelHeight);
     }
 }

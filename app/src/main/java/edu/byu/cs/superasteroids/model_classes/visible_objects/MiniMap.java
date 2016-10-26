@@ -1,6 +1,6 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
-import android.graphics.Point;
+import android.graphics.PointF;
 
 /**
  * Created by Marshall Garey
@@ -17,6 +17,6 @@ public class MiniMap extends VisibleObject {
     }
 
     public MiniMap(int x, int y) {
-        super(new Point(x, y));
+        super(new PointF(x, y), 1);
     }
 }
