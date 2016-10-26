@@ -171,10 +171,13 @@ public class AsteroidsGame {
         // create new objects
         ship = new Ship(0, 0, 5, 0, 0, null, null, null, null, null);
 
+        // Initialize viewport to avoid crashing
+        int levelWidth = getLevel(currentLevelNumber).getLevelWidth();
+        int levelHeight = getLevel(currentLevelNumber).getLevelHeight();
+        Viewport.init(levelWidth,levelHeight);
+
         // Initialize the background
-        background = new Background(BACKGROUND_IMAGE_FILE,
-                getLevel(currentLevelNumber).getLevelWidth(),
-                getLevel(currentLevelNumber).getLevelHeight());
+        background = new Background(BACKGROUND_IMAGE_FILE, levelWidth, levelHeight);
 
         // Initialize the list of background objects for the current level.
         initBgObjects();

@@ -16,8 +16,6 @@ public class Viewport {
     private static PointF currentViewportPosition = null;
 
     private Viewport() {
-        // Initialize to avoid crashing
-        init(0,0);
     }
 
     /**
@@ -58,19 +56,6 @@ public class Viewport {
         float centerY = levelHeight / 2;
         currentViewportPosition  = new PointF(centerX, centerY);
         moveViewport();
-
-//        float screenWidth = DrawingHelper.getGameViewWidth();
-//        float screenHeight = DrawingHelper.getGameViewHeight();
-//
-//        // X coordinates start at the left and go right
-//        float left = centerX - screenWidth / 2;
-//        float right = centerX + screenWidth / 2;
-//
-//        // Y coordinates start at the top and go down
-//        float top = centerY - screenHeight / 2;
-//        float bottom = centerY + screenHeight / 2;
-//
-//        view = new RectF(left, top, right, bottom);
     }
 
     private static void moveViewport() {

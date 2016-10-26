@@ -20,15 +20,15 @@ import edu.byu.cs.superasteroids.game.GameActivity;
  * The Android Activity used for the ship building process
  */
 public class ShipBuildingActivity extends ActivityView implements IShipBuildingView {
-	
-	private GestureDetectorCompat mDetector; 
-	
+
+	private GestureDetectorCompat mDetector;
+
 	private PartSelectionFragment mainBodyFragment = new PartSelectionFragment();
 	private PartSelectionFragment engineFragment = new PartSelectionFragment();
 	private PartSelectionFragment cannonFragment = new PartSelectionFragment();
 	private PartSelectionFragment extraPartFragment = new PartSelectionFragment();
 	private PartSelectionFragment powerCoreFragment = new PartSelectionFragment();
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,7 +68,7 @@ public class ShipBuildingActivity extends ActivityView implements IShipBuildingV
         //Move the main body  part selection view into this view
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mainBodyFragment)
         	.commit();
-        
+
         mDetector = new GestureDetectorCompat(this, new FlingListener());
     }
 
@@ -79,8 +79,8 @@ public class ShipBuildingActivity extends ActivityView implements IShipBuildingV
             getController().onResume();
     }
 
-	@Override 
-	public boolean onTouchEvent(MotionEvent event){ 
+	@Override
+	public boolean onTouchEvent(MotionEvent event){
 	    this.mDetector.onTouchEvent(event);
 	    // Be sure to call the superclass implementation
 	    return super.onTouchEvent(event);
@@ -94,7 +94,7 @@ public class ShipBuildingActivity extends ActivityView implements IShipBuildingV
 			.replace(R.id.fragment_container, viewFragment)
 			.commit();
 	}
-	
+
 	@Override
 	public IShipBuildingController getController() {
 		return (IShipBuildingController)super.getController();
@@ -106,7 +106,7 @@ public class ShipBuildingActivity extends ActivityView implements IShipBuildingV
     class FlingListener extends GestureDetector.SimpleOnGestureListener {
 
         @Override
-        public boolean onFling(MotionEvent event1, MotionEvent event2, 
+        public boolean onFling(MotionEvent event1, MotionEvent event2,
                 float velX, float velY) {
 
             if(getController() != null) {
@@ -144,11 +144,11 @@ public class ShipBuildingActivity extends ActivityView implements IShipBuildingV
                     getController().onSlideView(ViewDirection.DOWN);
 */
             }
-    		
+
     		return false;
         }
     }
-	
+
 	private PartSelectionFragment getPieceSelectionView(PartSelectionView view) {
 		switch(view) {
 			case MAIN_BODY:		return mainBodyFragment;
@@ -159,7 +159,7 @@ public class ShipBuildingActivity extends ActivityView implements IShipBuildingV
 			default: assert false; return null;
 		}
 	}
-	
+
 	private int getSlideInDirection(ViewDirection animationDirection) {
 		switch(animationDirection) {
 			case LEFT: 		return android.R.anim.slide_in_left;
@@ -169,7 +169,7 @@ public class ShipBuildingActivity extends ActivityView implements IShipBuildingV
 			default:	assert false; return -1;
 		}
 	}
-	
+
 	private int getSlideOutDirection(ViewDirection animationDirection) {
 		ViewDirection opposite = getOppositeDirection(animationDirection);
 		switch(opposite) {
@@ -180,15 +180,15 @@ public class ShipBuildingActivity extends ActivityView implements IShipBuildingV
 			default:	assert false; return -1;
 		}
 	}
-	
+
 	private ViewDirection getOppositeDirection(ViewDirection direction) {
 		switch(direction) {
-		case LEFT: 		return ViewDirection.RIGHT;
-		case RIGHT: 	return ViewDirection.LEFT;
-		case DOWN: 		return ViewDirection.UP;
-		case UP:		return ViewDirection.DOWN;
-		default:	assert false; return null;
-	}
+            case LEFT: 		return ViewDirection.RIGHT;
+            case RIGHT: 	return ViewDirection.LEFT;
+            case DOWN: 		return ViewDirection.UP;
+            case UP:		return ViewDirection.DOWN;
+            default:	assert false; return null;
+        }
 	}
 
 	@Override
