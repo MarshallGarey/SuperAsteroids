@@ -45,9 +45,9 @@ public class Asteroid extends MovingObject {
         scale = 1;
         float maxSpeed = 150;
         float minSpeed = 50;
+        random = new Random();
         speed = minSpeed + random.nextDouble() * (maxSpeed - minSpeed);
         direction = random.nextFloat() * (float)Math.PI * 2;    // 2PI is a full rotation
-        random = new Random();
         worldPosition = initRandomPosition(levelWidth, levelHeight);
         updateHitBox();
     }
@@ -93,9 +93,15 @@ public class Asteroid extends MovingObject {
     }
 
     public void update(double elapsedTime) {
+        // Update the asteroid
         super.update(speed, direction, elapsedTime);
-        GraphicsUtils.ricochetObject(worldPosition, hitBox, direction, AsteroidsGame.getCurrentLevel().getLevelWidth(),
-                AsteroidsGame.getCurrentLevel().getLevelHeight());
+        int worldWidth = AsteroidsGame.getCurrentLevel().getLevelWidth();
+        int worldHeight = AsteroidsGame.getCurrentLevel().getLevelHeight();
+
+        // Ricochet if the asteroid is now out of bounds.
+        if (outOfBounds(worldWidth, worldHeight)) {
+            super.ricochet(worldWidth, worldHeight);
+        }
     }
 
     // ----------------------------------------------------------------------------------------------------------------

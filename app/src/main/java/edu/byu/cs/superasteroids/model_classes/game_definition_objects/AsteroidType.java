@@ -1,7 +1,5 @@
 package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
-import android.graphics.PointF;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 

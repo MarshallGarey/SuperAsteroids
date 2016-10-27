@@ -5,6 +5,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.core.GraphicsUtils;
 import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 
@@ -136,6 +137,23 @@ public class VisibleObject {
                 elapsedTime);
         hitBox = moveObjectResult.getNewObjBounds();
         worldPosition = moveObjectResult.getNewObjPosition();
+    }
+
+    public boolean outOfBounds(int worldWidth, int worldHeight) {
+        return (hitBox.left < 0 || hitBox.right > worldWidth || hitBox.top < 0 || hitBox.bottom > worldHeight);
+    }
+
+    /**
+     * Ricochets an object off the bounds of the world.
+     * @param worldWidth    Width of the level.
+     * @param worldHeight   Height of the level.
+     */
+    public void ricochet(int worldWidth, int worldHeight) {
+        GraphicsUtils.RicochetObjectResult result =  GraphicsUtils.ricochetObject(
+                worldPosition, hitBox, direction, worldWidth, worldHeight);
+        direction = (float)result.getNewAngleRadians();
+        hitBox = result.getNewObjBounds();
+        worldPosition = result.getNewObjPosition();
     }
 
     /**

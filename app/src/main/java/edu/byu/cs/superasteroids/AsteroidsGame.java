@@ -295,7 +295,7 @@ public class AsteroidsGame {
             asteroid.draw();
         }
 
-        // TODO: draw everything else - asteroids, minimap, projectiles, etc.
+        // TODO: draw everything else - minimap, projectiles, etc.
     }
 
     /**
@@ -308,6 +308,13 @@ public class AsteroidsGame {
 
         // Update the ship
         ship.update(movePoint, elapsedTime);
+
+        // Update the asteroids
+        for (Asteroid asteroid : asteroids) {
+            asteroid.update(elapsedTime);
+        }
+
+        // TODO: update everything else - bullets, minimap, etc.
     }
 
     /**
