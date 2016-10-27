@@ -520,6 +520,7 @@ public class ShipBuildingController implements IShipBuildingController {
      */
     @Override
     public void onStartGamePressed() {
+        AsteroidsGame.initLevel();
         shipBuildingActivity.startGame();
     }
 
