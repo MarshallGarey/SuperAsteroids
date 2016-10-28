@@ -76,9 +76,8 @@ public class GameController implements IGameDelegate, IController {
                 // Touch screen coordinates are stored in InputManager.movePoint
                 // I need to convert screen coordinates to world coordinates because the positions of all objects are
                 // stored as world coordinates
-                boolean fire = InputManager.firePressed;
-                InputManager.firePressed = false;
-                AsteroidsGame.update(Viewport.screenToWorldCoordinates(InputManager.movePoint), elapsedTime, fire);
+                AsteroidsGame.update(Viewport.screenToWorldCoordinates(InputManager.movePoint), elapsedTime,
+                        InputManager.firePressed);
                 break;
 
             // New level, need to reload and do things

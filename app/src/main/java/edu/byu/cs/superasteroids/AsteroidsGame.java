@@ -318,7 +318,7 @@ public class AsteroidsGame {
         Viewport.update();
 
         // Update the ship
-        ship.update(movePoint, elapsedTime);
+        ship.update(movePoint, elapsedTime, fireProjectile);
 
         // Fire projectile
         if (fireProjectile) {

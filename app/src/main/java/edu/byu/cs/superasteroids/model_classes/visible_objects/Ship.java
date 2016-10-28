@@ -101,13 +101,14 @@ public class Ship extends MovingObject {
     /*
      * TODO: apply the speed boost from the power core; also, speed should probably also depend on the distance from
      * the touch point (don't move if you're at or close to the touch point)
+     * The ship can rotate but not move forward if firing a missile.
      */
-    public void update(PointF movePoint, double elapsedTime) {
+    public void update(PointF movePoint, double elapsedTime, boolean fireProjectile) {
 
         // Update the angle that we're pointing
-        if (movePoint != null) {
+        if (movePoint != null ) {
             direction = calculateAngleInRadians(movePoint);
-            speed = engine.getBaseSpeed(); // GraphicsUtils.distance(movePoint, worldPosition);
+            speed = fireProjectile ? 0 : engine.getBaseSpeed(); //GraphicsUtils.distance(movePoint,worldPosition);
         } else {
             speed = 0;
         }
@@ -160,7 +161,7 @@ public class Ship extends MovingObject {
         float x = cannon.getEmitPoint().getxPos() + cannon.getProjectileType().getWidth() / 2;
         float y = cannon.getEmitPoint().getyPos();
         PointF startingPoint = calculatePartPosition(new PointF(x,y), direction);
-        return cannon.fire(startingPoint, speed);
+        return cannon.fire(startingPoint, engine.getBaseSpeed());
     }
 
     /**
