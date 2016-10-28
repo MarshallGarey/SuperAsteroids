@@ -2,6 +2,8 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
 import android.graphics.PointF;
 
+import java.util.ArrayList;
+
 import edu.byu.cs.superasteroids.content.ContentManager;
 import edu.byu.cs.superasteroids.core.GraphicsUtils;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.CannonType;
@@ -154,6 +156,13 @@ public class Ship extends MovingObject {
         ));
     }
 
+    public Projectile fire() {
+        float x = cannon.getEmitPoint().getxPos() + cannon.getProjectileType().getWidth() / 2;
+        float y = cannon.getEmitPoint().getyPos();
+        PointF startingPoint = calculatePartPosition(new PointF(x,y), direction);
+        return cannon.fire(startingPoint, speed);
+    }
+
     /**
      * Computes the attach point for a ship part
      *
@@ -191,14 +200,14 @@ public class Ship extends MovingObject {
      */
     public void loadContent(ContentManager contentManager) {
         body.loadImage(contentManager);
-        cannon.loadImage(contentManager);
+        cannon.loadContent(contentManager);
         engine.loadImage(contentManager);
         extraPart.loadImage(contentManager);
     }
 
     public void unloadContent(ContentManager contentManager) {
         body.unloadImage(contentManager);
-        cannon.unloadImage(contentManager);
+        cannon.unloadContent(contentManager);
         engine.unloadImage(contentManager);
         extraPart.unloadImage(contentManager);
     }

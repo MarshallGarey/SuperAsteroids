@@ -56,7 +56,7 @@ public class GameController implements IGameDelegate, IController {
     public void update(double elapsedTime) {
 
         /**
-         * I use a state machine.
+         * A simple state machine.
          */
         switch (state) {
 
@@ -71,11 +71,14 @@ public class GameController implements IGameDelegate, IController {
             // make the ship invincible for a short period of time, or lose the game. I'll have to do something here
             // to handle when the ship gets hit by an asteroids - if it's dead, lose the game; otherwise, make it
             // invincible for a short period of time.
+            // TODO: Actually, make the ship invincible inside of its own class.
             case STATE_RUN:
                 // Touch screen coordinates are stored in InputManager.movePoint
                 // I need to convert screen coordinates to world coordinates because the positions of all objects are
                 // stored as world coordinates
-                AsteroidsGame.update(Viewport.screenToWorldCoordinates(InputManager.movePoint), elapsedTime);
+                boolean fire = InputManager.firePressed;
+                InputManager.firePressed = false;
+                AsteroidsGame.update(Viewport.screenToWorldCoordinates(InputManager.movePoint), elapsedTime, fire);
                 break;
 
             // New level, need to reload and do things

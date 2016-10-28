@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.PointF;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 
 import edu.byu.cs.superasteroids.content.ContentManager;
 import edu.byu.cs.superasteroids.database.Database;
@@ -15,6 +15,7 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ExtraPart
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.Level;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.MainBodyType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.PowerCoreType;
+import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ProjectileType;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Asteroid;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Background;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.BgObject;
@@ -104,9 +105,9 @@ public class AsteroidsGame {
     private static Ship ship;
 
     /**
-     * list of projectile's in the game; key is id
+     * A list of active projectiles in the game.
      */
-    private static HashMap<Integer, Projectile> projectiles;
+    private static HashSet<Projectile> projectiles;
 
     /**
      * the game's background - consists of an image
@@ -116,7 +117,8 @@ public class AsteroidsGame {
     /**
      * Private constructor to prevent other classes from instantiating this one
      */
-    private AsteroidsGame() {}
+    private AsteroidsGame() {
+    }
 
     public static void initAsteroidsGame() {
         initAsteroidsGame(gameContext);
@@ -169,7 +171,7 @@ public class AsteroidsGame {
         // Initialize viewport to avoid crashing
         int levelWidth = getLevel(currentLevelNumber).getLevelWidth();
         int levelHeight = getLevel(currentLevelNumber).getLevelHeight();
-        Viewport.init(levelWidth,levelHeight);
+        Viewport.init(levelWidth, levelHeight);
 
         // Initialize the background
         background = new Background(BACKGROUND_IMAGE_FILE, levelWidth, levelHeight);
@@ -183,6 +185,9 @@ public class AsteroidsGame {
         asteroidTypeIndices.add(2);  // growing
         asteroidTypeIndices.add(1);  // octeroid
         asteroidTypeIndices.add(0);  // regular
+
+        // Create an empty list of projectiles so they can be added in later when they're fired.
+        projectiles = new HashSet<>();
     }
 
     /**
@@ -226,6 +231,7 @@ public class AsteroidsGame {
 
     /**
      * Loads content of the asteroids game into memory (the activities content manager)
+     *
      * @param contentManager A reference to the content manager of the calling class / activity
      */
     public static void loadContent(ContentManager contentManager) {
@@ -251,6 +257,7 @@ public class AsteroidsGame {
 
     /**
      * Unloads content of the asteroids game from memory (the activities content manager)
+     *
      * @param contentManager A reference to the content manager of the calling class / activity
      */
     public static void unloadContent(ContentManager contentManager) {
@@ -269,6 +276,8 @@ public class AsteroidsGame {
         for (AsteroidType asteroidType : asteroidTypes) {
             asteroidType.unloadImage(contentManager);
         }
+
+        // Unload the projectiles
 
         // TODO: unload other content
     }
@@ -293,19 +302,41 @@ public class AsteroidsGame {
             asteroid.draw();
         }
 
+        for (Projectile projectile : projectiles) {
+            projectile.draw();
+        }
+
         // TODO: draw everything else - minimap, projectiles, etc.
     }
 
     /**
      * Updates all objects in the game.
      */
-    public static void update(PointF movePoint, double elapsedTime) {
+    public static void update(PointF movePoint, double elapsedTime, boolean fireProjectile) {
 
         // Update the viewport first, because all other objects are drawn relative to it.
         Viewport.update();
 
         // Update the ship
         ship.update(movePoint, elapsedTime);
+
+        // Fire projectile
+        if (fireProjectile) {
+            projectiles.add(ship.fire());
+        }
+
+        // Update projectiles, keeping track of the ones that need to be removed.
+        ArrayList<Projectile> toBeRemoved = new ArrayList<>();
+        for (Projectile projectile : projectiles) {
+            if (projectile.update(elapsedTime) != 0) {
+                toBeRemoved.add(projectile);
+            }
+        }
+
+        // Now we can remove projectiles - we can't do it at the same time we iterate over the list
+        for (Projectile projectile : toBeRemoved) {
+            projectiles.remove(projectile);
+        }
 
         // Update the asteroids
         for (Asteroid asteroid : asteroids) {
@@ -333,6 +364,7 @@ public class AsteroidsGame {
     /**
      * Find the specified level. I do it in a loop, because I don't want to have to guarantee that the levels are
      * stored in consecutive order.
+     *
      * @param number The level number we're interested in. Starts at 1.
      * @return A reference to the level, or the first one in the list if it isn't found.
      */
@@ -347,6 +379,7 @@ public class AsteroidsGame {
 
     /**
      * Gets the current level. Uses a more general method I already wrote.
+     *
      * @return The current level
      */
     public static Level getCurrentLevel() {
@@ -358,10 +391,10 @@ public class AsteroidsGame {
      */
     public static boolean hasAllParts() {
         return (ship.getBody() != null &&
-            ship.getCannon() != null &&
-            ship.getEngine() != null &&
-            ship.getExtraPart() != null &&
-            ship.getPowerCore() != null);
+                ship.getCannon() != null &&
+                ship.getEngine() != null &&
+                ship.getExtraPart() != null &&
+                ship.getPowerCore() != null);
     }
 
     /**

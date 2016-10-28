@@ -28,14 +28,10 @@ public class Asteroid extends MovingObject {
     /**
      * Constructor. Initialize the asteroid to a random position and velocity.
      *
-     * @param type  Type of the asteroid
+     * @param type Type of the asteroid
      */
     public Asteroid(AsteroidType type, int levelWidth, int levelHeight) {
-        super(
-                null,               // position - initialize right after this
-                0,                 // speed - TODO: make random
-                0                   // direction - TODO: make random
-        );
+        super(null, 0, 0);
         numTimesSplit = 0;
         asteroidType = type;
         this.imageId = asteroidType.imageId;
@@ -46,7 +42,7 @@ public class Asteroid extends MovingObject {
         float minSpeed = 50;
         random = new Random();
         speed = minSpeed + random.nextDouble() * (maxSpeed - minSpeed);
-        direction = random.nextFloat() * (float)Math.PI * 2;    // 2PI is a full rotation
+        direction = random.nextFloat() * (float) Math.PI * 2;    // 2PI is a full rotation
         worldPosition = initRandomPosition(levelWidth, levelHeight);
         updateHitBox();
     }
@@ -79,7 +75,7 @@ public class Asteroid extends MovingObject {
             center = new PointF(levelWidth / 2, levelHeight / 2);
 
             // Make sure the point is not within the "safezone" - close to the ship
-        } while((x < center.x + WIDTH_SAFEZONE / 2) && (x > center.x - WIDTH_SAFEZONE / 2) &&
+        } while ((x < center.x + WIDTH_SAFEZONE / 2) && (x > center.x - WIDTH_SAFEZONE / 2) &&
                 (y < center.y + HEIGHT_SAFEXONE / 2) && (y > center.y - HEIGHT_SAFEXONE / 2));
 
         return new PointF(x, y);

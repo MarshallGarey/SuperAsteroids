@@ -1,5 +1,10 @@
 package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
 
+import android.graphics.PointF;
+
+import edu.byu.cs.superasteroids.content.ContentManager;
+import edu.byu.cs.superasteroids.model_classes.visible_objects.Projectile;
+
 /**
  * Created by Marshall Garey
  * Information about the type of cannon for the ship.
@@ -31,6 +36,27 @@ public class CannonType extends AttachableShipPart {
         this.projectileType = new ProjectileType(projectileImage, projectileWidth,
                 projectileHeight, attackSound, damage);
     }
+
+    public void loadContent(ContentManager contentManager) {
+        loadImage(contentManager);
+        projectileType.loadContent(contentManager);
+    }
+
+    public void unloadContent(ContentManager contentManager) {
+        unloadImage(contentManager);
+        projectileType.unloadContent(contentManager);
+    }
+
+    public Projectile fire(PointF position, double projectileSpeed) {
+//        float x = worldPosition.x + emitPoint.getxPos() * scale;
+//        float y = worldPosition.y + emitPoint.getyPos() * scale;
+//        PointF startingPoint = new PointF(x,y);
+        return new Projectile(position, projectileSpeed, direction, projectileType);
+    }
+
+    // ============================================================== //
+    // ================== getters and setters ======================= //
+    // ============================================================== //
 
     public int getId() {
         return id;

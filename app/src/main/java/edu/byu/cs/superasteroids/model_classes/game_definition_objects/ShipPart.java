@@ -7,7 +7,7 @@ package edu.byu.cs.superasteroids.model_classes.game_definition_objects;
  */
 public class ShipPart extends ImageObject {
 
-    private final float DIRECTION_OFFSET = (float)-Math.PI / 2;
+    protected final float DIRECTION_OFFSET = (float)-Math.PI / 2;
 
     // Initialize fields common to ImageObject
     public ShipPart(String file, int width, int height, float scale) {

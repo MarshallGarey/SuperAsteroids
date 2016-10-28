@@ -33,6 +33,7 @@ public class MovingObject extends VisibleObject {
         this.speed = speed;
         this.direction = direction;
         this.worldPosition = point;
+        this.scale = 1;
     }
 
     /**
