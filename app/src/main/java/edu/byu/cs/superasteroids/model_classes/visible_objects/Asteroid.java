@@ -2,11 +2,9 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
 import android.graphics.PointF;
 
-import java.sql.Time;
 import java.util.Random;
 
 import edu.byu.cs.superasteroids.AsteroidsGame;
-import edu.byu.cs.superasteroids.core.GraphicsUtils;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.AsteroidType;
 
 /**
@@ -40,6 +38,7 @@ public class Asteroid extends MovingObject {
         );
         numTimesSplit = 0;
         asteroidType = type;
+        this.imageId = asteroidType.imageId;
         height = type.height;
         width = type.width;
         scale = 1;
@@ -84,12 +83,6 @@ public class Asteroid extends MovingObject {
                 (y < center.y + HEIGHT_SAFEXONE / 2) && (y > center.y - HEIGHT_SAFEXONE / 2));
 
         return new PointF(x, y);
-    }
-
-    @Override
-    public void draw() {
-        this.imageId = asteroidType.imageId;
-        super.draw();
     }
 
     public void update(double elapsedTime) {

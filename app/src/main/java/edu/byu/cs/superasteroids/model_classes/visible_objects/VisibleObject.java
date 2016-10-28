@@ -1,11 +1,9 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
-import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.core.GraphicsUtils;
 import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 
@@ -127,14 +125,14 @@ public class VisibleObject {
      * @param elapsedTime   How much time elapsed since the last update
      */
     public void update(double speed, float direction, double elapsedTime) {
-        this.direction = direction;
+        // Compute the result
         GraphicsUtils.MoveObjectResult moveObjectResult = GraphicsUtils.moveObject(
                 worldPosition,
                 hitBox,
                 speed,
-                direction - Math.PI / 2,    // Because the 0 or x axis is up, the direction is 90 degrees off what it
-                                            // should be, so correct the offset when moving the ship
+                direction,
                 elapsedTime);
+        // Save the result
         hitBox = moveObjectResult.getNewObjBounds();
         worldPosition = moveObjectResult.getNewObjPosition();
     }
@@ -149,8 +147,10 @@ public class VisibleObject {
      * @param worldHeight   Height of the level.
      */
     public void ricochet(int worldWidth, int worldHeight) {
+        // Compute the result
         GraphicsUtils.RicochetObjectResult result =  GraphicsUtils.ricochetObject(
                 worldPosition, hitBox, direction, worldWidth, worldHeight);
+        // Save the result
         direction = (float)result.getNewAngleRadians();
         hitBox = result.getNewObjBounds();
         worldPosition = result.getNewObjPosition();

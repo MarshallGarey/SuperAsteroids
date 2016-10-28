@@ -20,10 +20,6 @@ public class Ship extends MovingObject {
     private final int MAX_HP = 5;
     public static final float SHIP_SCALE = (float)0.2;
 
-    public int getMAX_HP() {
-        return MAX_HP;
-    }
-
     /**
      * The ship's main body.
      */
@@ -101,8 +97,8 @@ public class Ship extends MovingObject {
     }
 
     /*
-     * TODO: speed should probably depend on the power core as well as the distance from the touch point (don't move
-     * if you're at or close to the touch point)
+     * TODO: apply the speed boost from the power core; also, speed should probably also depend on the distance from
+     * the touch point (don't move if you're at or close to the touch point)
      */
     public void update(PointF movePoint, double elapsedTime) {
 

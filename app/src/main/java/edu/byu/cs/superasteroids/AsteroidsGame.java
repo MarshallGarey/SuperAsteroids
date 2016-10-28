@@ -124,8 +124,6 @@ public class AsteroidsGame {
 
     /**
      * Import all game data
-     * TODO: there's a bug - the game crashes if I start the game, then press back, then select a new part of the
-     * ship, then click start again. Look for references to this method (initAsteroidsGame) and also startActivity(game)
      */
     public static void initAsteroidsGame(Context context) {
         gameContext = context;
@@ -180,7 +178,7 @@ public class AsteroidsGame {
         initBgObjects();
 
         // Since I'm not getting the asteroid types in the same order as I read them in the JSON, I'm reordering them
-        // like this. It's silly but works as a temporary fix. TODO: hopefully fix this correctly
+        // like this. It's silly but works as a temporary fix. TODO: hopefully do this better
         asteroidTypeIndices = new ArrayList<>();
         asteroidTypeIndices.add(2);  // growing
         asteroidTypeIndices.add(1);  // octeroid
@@ -347,7 +345,10 @@ public class AsteroidsGame {
         return levels.get(0);
     }
 
-
+    /**
+     * Gets the current level. Uses a more general method I already wrote.
+     * @return The current level
+     */
     public static Level getCurrentLevel() {
         return getLevel(currentLevelNumber);
     }
