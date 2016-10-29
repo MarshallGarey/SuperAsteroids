@@ -48,7 +48,7 @@ public class Ship extends MovingObject {
 
     private int safeCount = 0;              // If 0, the ship will take damage from collisions with asteroids.
     private final int UPDATE_HZ = 60;       // Update happens 60 times per second
-    private final int SAFE_MODE_TIME = 5;   // The ship is safe for 5 seconds
+    private final int SAFE_MODE_TIME = 1;   // The ship is safe for 5 seconds
     private final int SAFE_MODE_COUNT = UPDATE_HZ * SAFE_MODE_TIME;
 
     /**
@@ -69,6 +69,7 @@ public class Ship extends MovingObject {
                 CannonType cannon, EngineType engine, ExtraPartType extraPart,
                 PowerCoreType powerCore) {
         super(new PointF(x,y), speed, direction);
+        this.scale = SHIP_SCALE;
         this.hp = hp;
         this.body = body;
         this.cannon = cannon;
@@ -150,7 +151,8 @@ public class Ship extends MovingObject {
                         ) {
                     asteroid.touch(this);
                     safeCount = SAFE_MODE_COUNT;
-                    this.hp--;
+                    MovingObject.playImpactSound();
+//                    this.hp--;
 
                     // Otherwise, immediately exit the loop so the ship doesn't take damage from multiple asteroids.
                     break;
@@ -170,7 +172,6 @@ public class Ship extends MovingObject {
         float diffY = movePoint.y - body.worldPosition.y;
         float diffX = movePoint.x - body.worldPosition.x;
 
-        // TODO: fix the angle - don't add 90 degrees
         return (float) (Math.atan2(diffY, diffX) + (Math.PI / 2));
     }
 

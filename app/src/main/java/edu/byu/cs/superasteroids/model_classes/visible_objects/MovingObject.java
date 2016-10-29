@@ -53,11 +53,7 @@ public class MovingObject extends VisibleObject {
      * Returns true if this object has collided with the other object.
      */
     public boolean collisionWith(RectF otherObject) {
-        if (RectF.intersects(this.hitBox, otherObject)) {
-            MovingObject.playImpactSound();
-            return true;
-        }
-        return false;
+        return (RectF.intersects(this.hitBox, otherObject));
     }
 
     /**
@@ -81,7 +77,7 @@ public class MovingObject extends VisibleObject {
     /**
      * Plays the sound of an impact.
      */
-    private static void playImpactSound() {
+    public static void playImpactSound() {
         contentManager.playSound(impactSoundId, 1, 1);
     }
 

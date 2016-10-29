@@ -51,6 +51,7 @@ public class ImageObject extends VisibleObject {
      */
     public void unloadImage(ContentManager contentManager) {
         contentManager.unloadImage(imageId);
+        imageId = IMAGE_NOT_LOADED;
     }
 
     // ============================================================== //

@@ -1,5 +1,6 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -16,7 +17,7 @@ public class VisibleObject {
     // Constants:
     private final int OPAQUE = 255;
     private final int TRANSPARENT = 0;
-    private final int IMAGE_NOT_LOADED = -1;
+    protected final int IMAGE_NOT_LOADED = -1;
 
     /**
      * Every image that is loaded in Android has an ID
@@ -45,9 +46,9 @@ public class VisibleObject {
         this.width = width;
         this.height = height;
         worldPosition = new PointF(0, 0);
-        updateHitBox();
         imageId = IMAGE_NOT_LOADED;
         this.scale = scale;
+        updateHitBox();
     }
 
     /**
@@ -61,8 +62,8 @@ public class VisibleObject {
         this.imageId = IMAGE_NOT_LOADED;
         this.width = 0;
         this.height = 0;
-        updateHitBox();
         this.scale = scale;
+        updateHitBox();
     }
 
     /**
@@ -88,6 +89,14 @@ public class VisibleObject {
                     pointf.y,
                     (float)Math.toDegrees((double)direction),
                     scale, scale, OPAQUE);
+
+            // FOR DEBUGGING: DRAW THE HIT BOX
+//            Rect rect = new Rect();
+//            rect.left = (int)(pointf.x - scale * width / 2);
+//            rect.right = (int)(pointf.x + scale * width / 2);
+//            rect.top = (int)(pointf.y - scale * width / 2);
+//            rect.bottom = (int)(pointf.y + scale * width / 2);
+//            DrawingHelper.drawRectangle(rect, Color.RED, 255);
         }
     }
 
@@ -163,10 +172,10 @@ public class VisibleObject {
      * x,y are the center of the image, so divide width and height by 2 and add to x,y to get left, top, right, bottom
      */
     public void updateHitBox() {
-        float left = worldPosition.x - width / 2;
-        float right = worldPosition.x + width / 2;
-        float top = worldPosition.y - height / 2;
-        float bottom = worldPosition.y + height / 2;
+        float left = worldPosition.x - scale * (width / 2);
+        float right = worldPosition.x + scale * (width / 2);
+        float top = worldPosition.y - scale * (height / 2);
+        float bottom = worldPosition.y + scale * (height / 2);
         hitBox = new RectF(left, top, right, bottom);
     }
 
