@@ -94,7 +94,7 @@ public class AsteroidsGame {
      * list of all asteroids in the level
      * TODO: make this a HashSet to make adding and removing of asteroids easier and cleaner
      */
-    private static ArrayList<Asteroid> asteroids;
+    private static HashSet<Asteroid> asteroids;
 
     /**
      * the game's minimap
@@ -223,7 +223,7 @@ public class AsteroidsGame {
      * velocities. Make an init function in the Asteroid class.
      */
     private static void initAsteroids(Level level) {
-        asteroids = new ArrayList<>();
+        asteroids = new HashSet<>();
         for (Level.LevelAsteroid levelAsteroid : level.getLevelAsteroids()) {
             int typeIndex = asteroidTypeIndices.get(levelAsteroid.getAsteroidID() - 1);
             // Add one asteroid for each

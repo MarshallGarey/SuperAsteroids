@@ -2,7 +2,7 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
 import android.graphics.PointF;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ProjectileType;
@@ -41,7 +41,7 @@ public class Projectile extends MovingObject{
      * @param elapsedTime Time since the last update.
      * @return -1 if the missile has the left bounds of the level, 0 otherwise.
      */
-    public int update(double elapsedTime, ArrayList<Asteroid> asteroids) {
+    public int update(double elapsedTime, HashSet<Asteroid> asteroids) {
 
         // Move the missile
         super.update(speed, direction + DIRECTION_OFFSET, elapsedTime);
@@ -68,9 +68,5 @@ public class Projectile extends MovingObject{
 
     public ProjectileType getProjectileType() {
         return projectileType;
-    }
-
-    public void setProjectileType(ProjectileType projectileType) {
-        this.projectileType = projectileType;
     }
 }

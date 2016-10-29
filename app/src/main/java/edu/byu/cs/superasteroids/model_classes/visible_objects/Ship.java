@@ -2,7 +2,7 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
 import android.graphics.PointF;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import edu.byu.cs.superasteroids.content.ContentManager;
 import edu.byu.cs.superasteroids.core.GraphicsUtils;
@@ -108,7 +108,7 @@ public class Ship extends MovingObject {
      * the touch point (don't move if you're at or close to the touch point)
      *
      */
-    public int update(PointF movePoint, double elapsedTime, boolean fireProjectile, ArrayList<Asteroid> asteroids) {
+    public int update(PointF movePoint, double elapsedTime, boolean fireProjectile, HashSet<Asteroid> asteroids) {
 
         // If the ship is dead, return a nonzero status so the game engine can go into the game over state.
         if (hp <= 0) {
@@ -167,9 +167,10 @@ public class Ship extends MovingObject {
      * Returns the angle the ship needs to be (in radians)
      */
     private float calculateAngleInRadians(PointF movePoint) {
-//        float diffY = worldPosition.y - movePoint.y; // because Y increases from top to bottom
-        float diffY = movePoint.y - body.worldPosition.y; // because Y increases from top to bottom
-        float diffX = movePoint.x - body.worldPosition.x; // because X increases from left to right
+        float diffY = movePoint.y - body.worldPosition.y;
+        float diffX = movePoint.x - body.worldPosition.x;
+
+        // TODO: fix the angle - don't add 90 degrees
         return (float) (Math.atan2(diffY, diffX) + (Math.PI / 2));
     }
 

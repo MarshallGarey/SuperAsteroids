@@ -10,18 +10,25 @@ public class GrowingAsteroid extends Asteroid {
 
     /**
      * The maximum size of this type of asteroid.
-     * TODO: Set this to a reasonable number.
+     * TODO: Change this to MAX_SCALE and set it to a reasonable number.
      */
-    private final int MAX_SIZE = 0;
+    private final float MAX_SCALE = 2;
 
     public GrowingAsteroid(AsteroidType type, int levelWidth, int levelHeight) {
         super(type, levelWidth, levelHeight);
     }
 
     /**
-     * TODO: Makes the asteroid get bigger. While increasing the scale, the hit box also needs to grow
+     * TODO: call this somewhere
+     * Makes the asteroid get bigger by increasing the scale.
      */
     public void grow() {
-
+        if (scale >= MAX_SCALE) {
+            return;
+        }
+        scale += 0.1;
+        width = (int)(width * scale);
+        height = (int)(height * scale);
+        updateHitBox();
     }
 }
