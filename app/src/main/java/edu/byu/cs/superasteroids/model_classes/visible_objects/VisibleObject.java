@@ -72,6 +72,7 @@ public class VisibleObject {
     }
 
     /**
+     * Default draw method.
      * Draws the object at the appropriate place in the viewport based on its world position.
      * Does not draw the object if it is not in the viewport;
      * in other words, if the user cannot see it, there is no need to draw it.

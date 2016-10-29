@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import edu.byu.cs.superasteroids.content.ContentManager;
 import edu.byu.cs.superasteroids.core.GraphicsUtils;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.CannonType;
-import edu.byu.cs.superasteroids.model_classes.game_definition_objects.CoordinateString;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.EngineType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ExtraPartType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.MainBodyType;
@@ -19,7 +18,7 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.PowerCore
  */
 public class Ship extends MovingObject {
 
-    private final int MAX_HP = 5;
+    private final int MAX_SHIP_HP = 5;
     public static final float SHIP_SCALE = (float)0.2;
 
     /**
@@ -47,6 +46,11 @@ public class Ship extends MovingObject {
      */
     private PowerCoreType powerCore;
 
+    private int safeCount = 0;              // If 0, the ship will take damage from collisions with asteroids.
+    private final int UPDATE_HZ = 60;       // Update happens 60 times per second
+    private final int SAFE_MODE_TIME = 5;   // The ship is safe for 5 seconds
+    private final int SAFE_MODE_COUNT = UPDATE_HZ * SAFE_MODE_TIME;
+
     /**
      * Typical constructor - initialize all the data
      *
@@ -71,13 +75,14 @@ public class Ship extends MovingObject {
         this.engine = engine;
         this.extraPart = extraPart;
         this.powerCore = powerCore;
+        this.safeCount = 0;
     }
 
     /**
      * Initialize the ship at the beginning of the game
      */
     public void init() {
-        setHp(MAX_HP);
+        setHp(MAX_SHIP_HP);
 
         // Initialize position of the ship in the center of the viewport
         setWorldPosition(Viewport.getView().centerX(), Viewport.getView().centerY());
@@ -101,13 +106,20 @@ public class Ship extends MovingObject {
     /*
      * TODO: apply the speed boost from the power core; also, speed should probably also depend on the distance from
      * the touch point (don't move if you're at or close to the touch point)
-     * The ship can rotate but not move forward if firing a missile.
+     *
      */
-    public void update(PointF movePoint, double elapsedTime, boolean fireProjectile) {
+    public int update(PointF movePoint, double elapsedTime, boolean fireProjectile, ArrayList<Asteroid> asteroids) {
 
-        // Update the angle that we're pointing
+        // If the ship is dead, return a nonzero status so the game engine can go into the game over state.
+        if (hp <= 0) {
+            return -1;
+        }
+
+        // Update the ship angle and speed.
         if (movePoint != null ) {
             direction = calculateAngleInRadians(movePoint);
+
+            // The ship can rotate but not move forward if firing a missile.
             speed = fireProjectile ? 0 : engine.getBaseSpeed(); //GraphicsUtils.distance(movePoint,worldPosition);
         } else {
             speed = 0;
@@ -122,8 +134,33 @@ public class Ship extends MovingObject {
         extraPart.update(speed, direction, elapsedTime);
         engine.update(speed, direction, elapsedTime);
 
+        // Update the safe mode counter.
+        if (safeCount != 0) {
+            safeCount--;
+        }
+        else {
+            // Test to see if the ship collided with any asteroids by testing for collisions with each part.
+            // We can test here because we know the ship is not in safe mode.
+            // Take some damage and put the ship in safe mode if it collides with an asteroid.
+            for (Asteroid asteroid : asteroids) {
+                if (asteroid.collisionWith(body.getHitBox()) ||
+                        asteroid.collisionWith(cannon.getHitBox()) ||
+                        asteroid.collisionWith(extraPart.getHitBox()) ||
+                        asteroid.collisionWith(engine.getHitBox())
+                        ) {
+                    asteroid.touch(this);
+                    safeCount = SAFE_MODE_COUNT;
+                    this.hp--;
+
+                    // Otherwise, immediately exit the loop so the ship doesn't take damage from multiple asteroids.
+                    break;
+                }
+            }
+        }
+
         // Make the ship's position the same as the body position
         worldPosition = body.worldPosition;
+        return 0;
     }
 
     /*
@@ -187,6 +224,12 @@ public class Ship extends MovingObject {
      * Draws the ship
      */
     public void draw() {
+
+        // Don't draw if the ship is dead.
+        if (hp <= 0) {
+            return;
+        }
+
         // Call draw individually on each part of the ship
         body.draw();
         cannon.draw();

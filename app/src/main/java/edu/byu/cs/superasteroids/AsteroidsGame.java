@@ -20,6 +20,7 @@ import edu.byu.cs.superasteroids.model_classes.visible_objects.Asteroid;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Background;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.BgObject;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.MiniMap;
+import edu.byu.cs.superasteroids.model_classes.visible_objects.MovingObject;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Projectile;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Ship;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Viewport;
@@ -91,6 +92,7 @@ public class AsteroidsGame {
 
     /**
      * list of all asteroids in the level
+     * TODO: make this a HashSet to make adding and removing of asteroids easier and cleaner
      */
     private static ArrayList<Asteroid> asteroids;
 
@@ -113,6 +115,10 @@ public class AsteroidsGame {
      * the game's background - consists of an image
      */
     private static Background background;
+
+    public enum GAME_STATUS {
+        GAME_OVER, WON_LEVEL, NORMAL
+    }
 
     /**
      * Private constructor to prevent other classes from instantiating this one
@@ -252,7 +258,7 @@ public class AsteroidsGame {
             asteroidType.loadImage(contentManager);
         }
 
-        // TODO: load other content
+        MovingObject.loadImpactSound(contentManager);
     }
 
     /**
@@ -277,16 +283,14 @@ public class AsteroidsGame {
             asteroidType.unloadImage(contentManager);
         }
 
-        // Unload the projectiles
-
-        // TODO: unload other content
+        MovingObject.unloadImpactSound(contentManager);
     }
 
     /**
      * Draws everything on the screen
      */
     public static void draw() {
-        // Draw the background FIRST
+        // Draw the background FIRST. TODO: scale the background.
         background.draw();
 
         // Draw the background images
@@ -305,20 +309,20 @@ public class AsteroidsGame {
         for (Projectile projectile : projectiles) {
             projectile.draw();
         }
-
-        // TODO: draw everything else - minimap, projectiles, etc.
     }
 
     /**
-     * Updates all objects in the game.
+     * Updates all objects in the game. TODO: return nonzero status
      */
-    public static void update(PointF movePoint, double elapsedTime, boolean fireProjectile) {
+    public static GAME_STATUS update(PointF movePoint, double elapsedTime, boolean fireProjectile) {
 
         // Update the viewport first, because all other objects are drawn relative to it.
         Viewport.update();
 
-        // Update the ship
-        ship.update(movePoint, elapsedTime, fireProjectile);
+        // Update the ship. Returns nonzero if the ship died, so we can report to the game engine a game over.
+        if (ship.update(movePoint, elapsedTime, fireProjectile, asteroids) != 0) {
+            return GAME_STATUS.GAME_OVER;
+        }
 
         // Fire projectile
         if (fireProjectile) {
@@ -328,7 +332,7 @@ public class AsteroidsGame {
         // Update projectiles, keeping track of the ones that need to be removed.
         ArrayList<Projectile> toBeRemoved = new ArrayList<>();
         for (Projectile projectile : projectiles) {
-            if (projectile.update(elapsedTime) != 0) {
+            if (projectile.update(elapsedTime, asteroids) != 0) {
                 toBeRemoved.add(projectile);
             }
         }
@@ -338,12 +342,23 @@ public class AsteroidsGame {
             projectiles.remove(projectile);
         }
 
-        // Update the asteroids
+        // Update the asteroids. update returns nonzero if it has been destroyed.
+        ArrayList<Asteroid> asteroidsToBeRemoved = new ArrayList<>();
         for (Asteroid asteroid : asteroids) {
-            asteroid.update(elapsedTime);
+            if (asteroid != null) {
+                if (asteroid.update(elapsedTime) != 0) {
+                    // TODO: split the asteroid. For now, I just want to test destroying it.
+                    asteroidsToBeRemoved.add(asteroid);
+                }
+            }
         }
 
-        // TODO: update everything else - bullets, minimap, etc.
+        // Remove any asteroids that have been destroyed. This erases it.
+        for (Asteroid asteroid : asteroidsToBeRemoved) {
+            asteroids.remove(asteroid);
+        }
+
+        return GAME_STATUS.NORMAL;
     }
 
     /**

@@ -1,15 +1,21 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
 import android.graphics.PointF;
+import android.graphics.RectF;
+
+import java.io.IOException;
+
+import edu.byu.cs.superasteroids.content.ContentManager;
 
 /**
  * Created by Marshall Garey
  * This class contains information and methods common to all moving objects. Moving objects are
  * things that move around the screen, such as projectiles, asteroids, and the ship.
+ * TODO: load the impact sound once and play the impact sound when objects collide
  */
 public class MovingObject extends VisibleObject {
 
-    private final int STARTING_HP = 5;
+    protected final int STARTING_HP = 10;
 
     /**
      * The speed at which the object is moving.
@@ -20,6 +26,13 @@ public class MovingObject extends VisibleObject {
      * The object's current hit points.
      */
     protected int hp;
+
+    /**
+     * The path to the impact sound
+     */
+    private static final String impactSound = "sounds/impact.wav";
+    private static int impactSoundId = -1;
+    private static ContentManager contentManager;
 
     /**
      * Initialize the object at the position (x,y) with the specified velocity (speed and direction)
@@ -37,10 +50,39 @@ public class MovingObject extends VisibleObject {
     }
 
     /**
-     * TODO: Detects if the object has collided with any other object.
+     * Returns true if this object has collided with the other object.
      */
-    public boolean detectCollision() {
+    public boolean collisionWith(RectF otherObject) {
+        if (RectF.intersects(this.hitBox, otherObject)) {
+            MovingObject.playImpactSound();
+            return true;
+        }
         return false;
+    }
+
+    /**
+     * Static because it only needs to be called once and is called on the class, not an instance.
+     */
+    public static void loadImpactSound(ContentManager contentManager) {
+        try {
+            impactSoundId = contentManager.loadSound(impactSound);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        MovingObject.contentManager = contentManager;
+    }
+
+    public static void unloadImpactSound(ContentManager contentManager) {
+        contentManager.unloadSound(impactSoundId);
+        MovingObject.contentManager = null;
+        impactSoundId = -1;
+    }
+
+    /**
+     * Plays the sound of an impact.
+     */
+    private static void playImpactSound() {
+        contentManager.playSound(impactSoundId, 1, 1);
     }
 
     // ----------------------------------------------------------------------------------------------------------------

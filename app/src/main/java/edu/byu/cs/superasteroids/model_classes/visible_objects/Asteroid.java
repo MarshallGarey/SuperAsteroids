@@ -26,25 +26,65 @@ public class Asteroid extends MovingObject {
     private int numTimesSplit;
 
     /**
-     * Constructor. Initialize the asteroid to a random position and velocity.
+     * Constructor. Initialize the asteroid to a random position and velocity. Called the first time an asteroid is
+     * created.
      *
      * @param type Type of the asteroid
      */
     public Asteroid(AsteroidType type, int levelWidth, int levelHeight) {
         super(null, 0, 0);
+        random = new Random();
         numTimesSplit = 0;
+
+        // Initialize and scale the height and width before position
+        height = (int) (type.height * scale);
+        width = (int) (type.width * scale);
+
+        // Initialize to a random position
+        worldPosition = initRandomPosition(levelWidth, levelHeight);
+
+        // Call init last - it initializes remaining data.
+        init(type);
+    }
+
+    /**
+     * Constructor. Called when initializing an asteroid that is created from a split asteroid.
+     *
+     * @param type          Type
+     * @param numTimesSplit How many times it has been split
+     * @param parentPoint   Where the parent originitaed
+     */
+    public Asteroid(AsteroidType type, int numTimesSplit, PointF parentPoint, int parentHp) {
+        super(null, 0, 0);
+        this.numTimesSplit = numTimesSplit;
+        this.hp = STARTING_HP / (2 * numTimesSplit);
+        worldPosition = parentPoint;
+        // TODO: make scale 1 / n, where n is number of pieces split;
+        //      I should probably do this in the individual asteroid classes
+        init(type);
+    }
+
+    /**
+     * Initialize an asteroid object.
+     * THE HEIGHT, WIDTH, AND POSITION MUST BE INITIALIZED BEFORE THIS METHOD IS CALLED OR A NULL POINTER EXCEPTION
+     * WILL HAPPEN IN THE updateHitBox() METHOD.
+     *
+     * @param type - the type - octeroid, regular, growing
+     */
+    private void init(AsteroidType type) {
         asteroidType = type;
         this.imageId = asteroidType.imageId;
-        height = type.height;
-        width = type.width;
-        scale = 1;
+
+        // Initialize the hit box AFTER initializing height and width
+        updateHitBox();
+
+        // Initialize to random speed; the numbers were arbitrarily chosen, but they seem pretty good.
         float maxSpeed = 150;
         float minSpeed = 50;
-        random = new Random();
         speed = minSpeed + random.nextDouble() * (maxSpeed - minSpeed);
-        direction = random.nextFloat() * (float) Math.PI * 2;    // 2PI is a full rotation
-        worldPosition = initRandomPosition(levelWidth, levelHeight);
-        updateHitBox();
+
+        // Initialize to random direction (angle in radians - 2PI is a full rotation)
+        direction = random.nextFloat() * (float) Math.PI * 2;
     }
 
     /**
@@ -81,16 +121,36 @@ public class Asteroid extends MovingObject {
         return new PointF(x, y);
     }
 
-    public void update(double elapsedTime) {
-        // Update the asteroid
+    public int update(double elapsedTime) {
+
+        // First, if the asteroid is dead (hp is below zero due to being hit by projectiles), just return right here
+        // with a status saying that it is dead. It needs to be destroyed and split into multiple asteroids.
+        if (hp <= 0) {
+            numTimesSplit++;
+            return -1;
+        }
+
+        // Otherwise, update the asteroid
         super.update(speed, direction, elapsedTime);
-        int worldWidth = AsteroidsGame.getCurrentLevel().getLevelWidth();
-        int worldHeight = AsteroidsGame.getCurrentLevel().getLevelHeight();
 
         // Ricochet if the asteroid is now out of bounds.
+        int worldWidth = AsteroidsGame.getCurrentLevel().getLevelWidth();
+        int worldHeight = AsteroidsGame.getCurrentLevel().getLevelHeight();
         if (outOfBounds(worldWidth, worldHeight)) {
             super.ricochet(worldWidth, worldHeight);
         }
+
+        // Asteroid is still alive
+        return 0;
+    }
+
+    public void touch(Projectile projectile) {
+        int damage = projectile.getProjectileType().getDamage();
+        this.hp -= damage;
+    }
+
+    public void touch(Ship ship) {
+        this.hp -= 1;
     }
 
     // ----------------------------------------------------------------------------------------------------------------
@@ -104,4 +164,5 @@ public class Asteroid extends MovingObject {
     public void setType(AsteroidType type) {
         this.asteroidType = type;
     }
+
 }

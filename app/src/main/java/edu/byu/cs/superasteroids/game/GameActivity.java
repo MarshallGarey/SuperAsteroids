@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import edu.byu.cs.superasteroids.R;
 import edu.byu.cs.superasteroids.base.ActivityView;

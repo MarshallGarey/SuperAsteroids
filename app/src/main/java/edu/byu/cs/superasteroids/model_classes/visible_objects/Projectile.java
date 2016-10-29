@@ -2,6 +2,8 @@ package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
 import android.graphics.PointF;
 
+import java.util.ArrayList;
+
 import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ProjectileType;
 
@@ -39,9 +41,20 @@ public class Projectile extends MovingObject{
      * @param elapsedTime Time since the last update.
      * @return -1 if the missile has the left bounds of the level, 0 otherwise.
      */
-    public int update(double elapsedTime) {
+    public int update(double elapsedTime, ArrayList<Asteroid> asteroids) {
+
+        // Move the missile
         super.update(speed, direction + DIRECTION_OFFSET, elapsedTime);
-        // The missile has exited the level now.
+
+        // Check if it has collided with an asteroid
+        for (Asteroid asteroid : asteroids) {
+            if (this.collisionWith(asteroid.getHitBox())) {
+                asteroid.touch(this);
+                return -1;
+            }
+        }
+
+        // Check if the missile has exited the level
         if (outOfBounds(AsteroidsGame.getCurrentLevel().getLevelWidth(),
                 AsteroidsGame.getCurrentLevel().getLevelHeight())) {
             return -1;

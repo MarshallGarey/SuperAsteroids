@@ -1,7 +1,10 @@
 package edu.byu.cs.superasteroids.base;
 
+import android.widget.Toast;
+
 import edu.byu.cs.superasteroids.AsteroidsGame;
 import edu.byu.cs.superasteroids.content.ContentManager;
+import edu.byu.cs.superasteroids.game.GameActivity;
 import edu.byu.cs.superasteroids.game.InputManager;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Viewport;
 
@@ -18,7 +21,8 @@ public class GameController implements IGameDelegate, IController {
         STATE_START_LEVEL,
         STATE_RUN,
         STATE_NEW_LEVEL,
-        STATE_END
+        STATE_END,
+        STATE_GAME_OVER
     }
 
     public GameController() {
@@ -67,17 +71,19 @@ public class GameController implements IGameDelegate, IController {
                 break;
 
             // Main loop of the game. Just update stuff.
-            // TODO: The return value of update should determine whether to stay in this state, go to the next level,
-            // make the ship invincible for a short period of time, or lose the game. I'll have to do something here
-            // to handle when the ship gets hit by an asteroids - if it's dead, lose the game; otherwise, make it
-            // invincible for a short period of time.
-            // TODO: Actually, make the ship invincible inside of its own class.
             case STATE_RUN:
                 // Touch screen coordinates are stored in InputManager.movePoint
                 // I need to convert screen coordinates to world coordinates because the positions of all objects are
-                // stored as world coordinates
-                AsteroidsGame.update(Viewport.screenToWorldCoordinates(InputManager.movePoint), elapsedTime,
+                // stored as world coordinates.
+                // The return value of update tells us whether to transition to a new level, end the game, or just
+                // continue normal execution.
+                AsteroidsGame.GAME_STATUS status = AsteroidsGame.update(
+                        Viewport.screenToWorldCoordinates(InputManager.movePoint),
+                        elapsedTime,
                         InputManager.firePressed);
+                if (status == AsteroidsGame.GAME_STATUS.GAME_OVER) {
+                    state = State_e.STATE_GAME_OVER;
+                }
                 break;
 
             // New level, need to reload and do things
@@ -86,6 +92,10 @@ public class GameController implements IGameDelegate, IController {
 
             // Last level won, congratulate the player and quit
             case STATE_END:
+                break;
+
+            // Lost the game, console the player and quit
+            case STATE_GAME_OVER:
                 break;
         }
     }

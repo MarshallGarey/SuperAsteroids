@@ -48,9 +48,6 @@ public class CannonType extends AttachableShipPart {
     }
 
     public Projectile fire(PointF position, double projectileSpeed) {
-//        float x = worldPosition.x + emitPoint.getxPos() * scale;
-//        float y = worldPosition.y + emitPoint.getyPos() * scale;
-//        PointF startingPoint = new PointF(x,y);
         return new Projectile(position, projectileSpeed, direction, projectileType);
     }
 
