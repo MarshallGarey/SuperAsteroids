@@ -49,7 +49,7 @@ public class Ship extends MovingObject {
     private final int SAFE_MODE_COUNT = UPDATE_HZ * SAFE_MODE_TIME;
 
     private final int MAX_SHIP_HP = 5;
-    public static final float SHIP_SCALE = (float)0.2;
+    public static final float SHIP_SCALE = (float) 0.2;
 
     /**
      * Typical constructor - initialize all the data
@@ -68,7 +68,7 @@ public class Ship extends MovingObject {
     public Ship(int x, int y, int hp, int speed, float direction, MainBodyType body,
                 CannonType cannon, EngineType engine, ExtraPartType extraPart,
                 PowerCoreType powerCore) {
-        super(new PointF(x,y), speed, direction);
+        super(new PointF(x, y), speed, direction);
         this.scale = SHIP_SCALE;
         this.hp = hp;
         this.body = body;
@@ -109,7 +109,10 @@ public class Ship extends MovingObject {
      * the touch point (don't move if you're at or close to the touch point)
      *
      */
-    public int update(PointF movePoint, double elapsedTime, boolean fireProjectile, HashSet<Asteroid> asteroids) {
+    public int update(PointF movePoint, double elapsedTime, boolean fireProjectile,
+                      HashSet<Asteroid> regularAsteroids,
+                      HashSet<GrowingAsteroid> growingAsteroids,
+                      HashSet<Octeroid> octeroids) {
 
         // If the ship is dead, return a nonzero status so the game engine can go into the game over state.
         if (hp <= 0) {
@@ -117,7 +120,7 @@ public class Ship extends MovingObject {
         }
 
         // Update the ship angle and speed.
-        if (movePoint != null ) {
+        if (movePoint != null) {
             direction = calculateAngleInRadians(movePoint);
 
             // The ship can rotate but not move forward if firing a missile.
@@ -138,31 +141,68 @@ public class Ship extends MovingObject {
         // Update the safe mode counter.
         if (safeCount != 0) {
             safeCount--;
-        }
-        else {
+        } else {
             // Test to see if the ship collided with any asteroids by testing for collisions with each part.
             // We can test here because we know the ship is not in safe mode.
             // Take some damage and put the ship in safe mode if it collides with an asteroid.
-            for (Asteroid asteroid : asteroids) {
-                if (asteroid.collisionWith(body.getHitBox()) ||
-                        asteroid.collisionWith(cannon.getHitBox()) ||
-                        asteroid.collisionWith(extraPart.getHitBox()) ||
-                        asteroid.collisionWith(engine.getHitBox())
-                        ) {
-                    asteroid.touch(this);
-                    safeCount = SAFE_MODE_COUNT;
-                    MovingObject.playImpactSound();
-                    this.hp--;
-
-                    // Otherwise, immediately exit the loop so the ship doesn't take damage from multiple asteroids.
-                    break;
-                }
+            if (collisionWithAsteroid(regularAsteroids, growingAsteroids, octeroids)) {
+                safeCount = SAFE_MODE_COUNT;
+                MovingObject.playImpactSound();
+                this.hp--;
             }
         }
 
         // Make the ship's position the same as the body position
         worldPosition = body.worldPosition;
         return 0;
+    }
+
+    /**
+     * Tests for collisions with asteroids.
+     *
+     * @param regularAsteroids List of regular asteroids.
+     * @param octeroids        List of octeroids.
+     * @param growingAsteroids List of growing asteroids.
+     * @return True if the ship collided with an asteroid. False if not.
+     */
+    private boolean collisionWithAsteroid(HashSet<Asteroid> regularAsteroids,
+                                          HashSet<GrowingAsteroid> growingAsteroids,
+                                          HashSet<Octeroid> octeroids
+                                          ) {
+        for (Asteroid asteroid : regularAsteroids) {
+            if (asteroid.collisionWith(body.getHitBox()) ||
+                    asteroid.collisionWith(cannon.getHitBox()) ||
+                    asteroid.collisionWith(extraPart.getHitBox()) ||
+                    asteroid.collisionWith(engine.getHitBox())
+                    ) {
+                asteroid.touch(this);
+                return true;
+
+            }
+        }
+
+        for (Octeroid octeroid : octeroids) {
+            if (octeroid.collisionWith(body.getHitBox()) ||
+                    octeroid.collisionWith(cannon.getHitBox()) ||
+                    octeroid.collisionWith(extraPart.getHitBox()) ||
+                    octeroid.collisionWith(engine.getHitBox())
+                    ) {
+                octeroid.touch(this);
+                return true;
+            }
+        }
+
+        for (GrowingAsteroid growingAsteroid : growingAsteroids) {
+            if (growingAsteroid.collisionWith(body.getHitBox()) ||
+                    growingAsteroid.collisionWith(cannon.getHitBox()) ||
+                    growingAsteroid.collisionWith(extraPart.getHitBox()) ||
+                    growingAsteroid.collisionWith(engine.getHitBox())
+                    ) {
+                growingAsteroid.touch(this);
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
@@ -199,14 +239,14 @@ public class Ship extends MovingObject {
     public Projectile fire() {
         float x = cannon.getEmitPoint().getxPos() + cannon.getProjectileType().getWidth() / 2;
         float y = cannon.getEmitPoint().getyPos();
-        PointF startingPoint = calculatePartPosition(new PointF(x,y), direction);
+        PointF startingPoint = calculatePartPosition(new PointF(x, y), direction);
         return cannon.fire(startingPoint, engine.getBaseSpeed());
     }
 
     /**
      * Computes the attach point for a ship part
      *
-     * @param angle       - the angle to rotate the part by
+     * @param angle - the angle to rotate the part by
      * @return point      - the location the part will be drawn
      */
     private PointF calculatePartPosition(PointF partOffset, float angle) {

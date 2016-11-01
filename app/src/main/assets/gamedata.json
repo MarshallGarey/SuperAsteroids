@@ -74,6 +74,10 @@
 					{
 						"number":4,
 						"asteroidId":2
+					},
+					{
+						"number":4,
+						"asteroidId":3
 					}
 				]
 			},

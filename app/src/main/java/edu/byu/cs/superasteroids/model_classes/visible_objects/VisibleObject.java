@@ -87,7 +87,7 @@ public class VisibleObject {
                     imageId,
                     pointf.x,
                     pointf.y,
-                    (float)Math.toDegrees((double)direction),
+                    (float) Math.toDegrees((double) direction),
                     scale, scale, OPAQUE);
 
             // FOR DEBUGGING: DRAW THE HIT BOX
@@ -114,6 +114,7 @@ public class VisibleObject {
 
     /**
      * Draws an image without checking if it is in the viewport.
+     *
      * @param scale How much to scale the image by.
      */
     public void draw(float scale) {
@@ -130,9 +131,10 @@ public class VisibleObject {
 
     /**
      * Updates the position and hit box of the object based on its speed and direction
-     * @param speed         How fast the object is moving
-     * @param direction     What direction the object is moving
-     * @param elapsedTime   How much time elapsed since the last update
+     *
+     * @param speed       How fast the object is moving
+     * @param direction   What direction the object is moving
+     * @param elapsedTime How much time elapsed since the last update
      */
     public void update(double speed, float direction, double elapsedTime) {
         // Compute the result
@@ -153,15 +155,16 @@ public class VisibleObject {
 
     /**
      * Ricochets an object off the bounds of the world.
-     * @param worldWidth    Width of the level.
-     * @param worldHeight   Height of the level.
+     *
+     * @param worldWidth  Width of the level.
+     * @param worldHeight Height of the level.
      */
     public void ricochet(int worldWidth, int worldHeight) {
         // Compute the result
-        GraphicsUtils.RicochetObjectResult result =  GraphicsUtils.ricochetObject(
+        GraphicsUtils.RicochetObjectResult result = GraphicsUtils.ricochetObject(
                 worldPosition, hitBox, direction, worldWidth, worldHeight);
         // Save the result
-        direction = (float)result.getNewAngleRadians();
+        direction = (float) result.getNewAngleRadians();
         hitBox = result.getNewObjBounds();
         worldPosition = result.getNewObjPosition();
     }
@@ -181,6 +184,7 @@ public class VisibleObject {
 
     /**
      * Translate the objects world (x,y) coordinates to screen coordinates
+     *
      * @return The screen coordinates
      */
     private PointF translateToScreenCoordinates() {
@@ -192,6 +196,10 @@ public class VisibleObject {
     // ============================================================== //
     // ================== getters and setters ======================= //
     // ============================================================== //
+
+    public float getScale() {
+        return scale;
+    }
 
     public void setImageId(int id) {
         imageId = id;

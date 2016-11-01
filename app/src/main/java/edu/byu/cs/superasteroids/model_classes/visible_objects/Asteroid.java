@@ -14,8 +14,9 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.AsteroidT
  */
 public class Asteroid extends MovingObject {
 
+    public static final int MAX_TIMES_SPLIT = 2;
+    public static final int NUM_SPLIT_ASTEROIDS = 2;
     private AsteroidType asteroidType;
-    private final int MAX_TIMES_SPLIT = 2;
     private Random random;
 
     /**
@@ -54,13 +55,13 @@ public class Asteroid extends MovingObject {
      * @param numTimesSplit How many times it has been split
      * @param parentPoint   Where the parent originitaed
      */
-    public Asteroid(AsteroidType type, int numTimesSplit, PointF parentPoint, int parentHp) {
+    public Asteroid(AsteroidType type, int numTimesSplit, PointF parentPoint, float newScale) {
         super(null, 0, 0);
+        random = new Random();
         this.numTimesSplit = numTimesSplit;
         this.hp = STARTING_HP / (2 * numTimesSplit);
         worldPosition = parentPoint;
-        // TODO: make scale 1 / n, where n is number of pieces split;
-        //      I should probably do this in the individual asteroid classes
+        scale = newScale;
         init(type);
     }
 
@@ -121,6 +122,12 @@ public class Asteroid extends MovingObject {
         return new PointF(x, y);
     }
 
+    /**
+     * Updates the asteroid position and ricochets off walls. Collision detecting is done by the ship and projectiles.
+     *
+     * @param elapsedTime Time since the last update.
+     * @return 0 if the asteroid is still alive, -1 if not.
+     */
     public int update(double elapsedTime) {
 
         // First, if the asteroid is dead (hp is below zero due to being hit by projectiles), just return right here
@@ -144,11 +151,21 @@ public class Asteroid extends MovingObject {
         return 0;
     }
 
+    /**
+     * What to do when a projectile collides with the asteroid.
+     *
+     * @param projectile The projectile.
+     */
     public void touch(Projectile projectile) {
         int damage = projectile.getProjectileType().getDamage();
         this.hp -= damage;
     }
 
+    /**
+     * What to do when a ship collides with the asteroid.
+     *
+     * @param ship The ship.
+     */
     public void touch(Ship ship) {
         this.hp -= 1;
     }
@@ -156,6 +173,10 @@ public class Asteroid extends MovingObject {
     // ============================================================== //
     // ================== getters and setters ======================= //
     // ============================================================== //
+
+    public int getNumTimesSplit() {
+        return numTimesSplit;
+    }
 
     public AsteroidType getType() {
         return asteroidType;

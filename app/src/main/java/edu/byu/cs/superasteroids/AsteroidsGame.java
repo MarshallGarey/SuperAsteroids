@@ -15,12 +15,13 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ExtraPart
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.Level;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.MainBodyType;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.PowerCoreType;
-import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ProjectileType;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Asteroid;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Background;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.BgObject;
+import edu.byu.cs.superasteroids.model_classes.visible_objects.GrowingAsteroid;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.MiniMap;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.MovingObject;
+import edu.byu.cs.superasteroids.model_classes.visible_objects.Octeroid;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Projectile;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Ship;
 import edu.byu.cs.superasteroids.model_classes.visible_objects.Viewport;
@@ -47,6 +48,13 @@ public class AsteroidsGame {
     private static ArrayList<AsteroidType> asteroidTypes;
 
     private static ArrayList<Integer> asteroidTypeIndices;
+
+    /**
+     * lists of all asteroids in the level
+     */
+    private static HashSet<Asteroid> regularAsteroids;
+    private static HashSet<GrowingAsteroid> growingAsteroids;
+    private static HashSet<Octeroid> octeroidAsteroids;
 
     /**
      * a list of background object types in the game
@@ -91,12 +99,6 @@ public class AsteroidsGame {
     private static ArrayList<PowerCoreType> powerCoreTypes;
 
     /**
-     * list of all asteroids in the level
-     * TODO: make this a HashSet to make adding and removing of asteroids easier and cleaner
-     */
-    private static HashSet<Asteroid> asteroids;
-
-    /**
      * the game's minimap
      */
     private static MiniMap miniMap;
@@ -116,6 +118,9 @@ public class AsteroidsGame {
      */
     private static Background background;
 
+    /**
+     * Return value for the update function. This tells the game engine how to proceed.
+     */
     public enum GAME_STATUS {
         GAME_OVER, WON_LEVEL, NORMAL
     }
@@ -223,14 +228,33 @@ public class AsteroidsGame {
      * velocities. Make an init function in the Asteroid class.
      */
     private static void initAsteroids(Level level) {
-        asteroids = new HashSet<>();
+        regularAsteroids = new HashSet<>();
+        octeroidAsteroids = new HashSet<>();
+        growingAsteroids = new HashSet<>();
         for (Level.LevelAsteroid levelAsteroid : level.getLevelAsteroids()) {
             int typeIndex = asteroidTypeIndices.get(levelAsteroid.getAsteroidID() - 1);
             // Add one asteroid for each
             for (int i = levelAsteroid.getAsteroidNumber(); i > 0; --i) {
-                asteroids.add(new Asteroid(
-                        asteroidTypes.get(typeIndex), level.getLevelWidth(), level.getLevelHeight()
-                ));
+                AsteroidType asteroidType = asteroidTypes.get(typeIndex);
+                String typeString = asteroidType.getType();
+                if (typeString.equals("regular")) {
+                    regularAsteroids.add(new Asteroid(
+                            asteroidType, level.getLevelWidth(), level.getLevelHeight()
+                    ));
+                }
+                else if (typeString.equals("octeroid")) {
+                    octeroidAsteroids.add(new Octeroid(
+                            asteroidType, level.getLevelWidth(), level.getLevelHeight()
+                    ));
+                }
+                else if (typeString.equals("growing")) {
+                    growingAsteroids.add(new GrowingAsteroid(
+                            asteroidType, level.getLevelWidth(), level.getLevelHeight()
+                    ));
+                }
+                else {
+                    // TODO: this is bad. Throw an error or something.
+                }
             }
         }
     }
@@ -301,9 +325,21 @@ public class AsteroidsGame {
         // Draw the ship
         ship.draw();
 
-        // Draw the asteroids
-        for (Asteroid asteroid : asteroids) {
+        // Draw the asteroids:
+
+        // Regular
+        for (Asteroid asteroid : regularAsteroids) {
             asteroid.draw();
+        }
+
+        // Octeroid
+        for (Octeroid octeroid : octeroidAsteroids) {
+            octeroid.draw();
+        }
+
+        // Growing
+        for (GrowingAsteroid growingAsteroid : growingAsteroids) {
+            growingAsteroid.draw();
         }
 
         for (Projectile projectile : projectiles) {
@@ -312,7 +348,7 @@ public class AsteroidsGame {
     }
 
     /**
-     * Updates all objects in the game. TODO: return nonzero status
+     * Updates all objects in the game.
      */
     public static GAME_STATUS update(PointF movePoint, double elapsedTime, boolean fireProjectile) {
 
@@ -320,7 +356,8 @@ public class AsteroidsGame {
         Viewport.update();
 
         // Update the ship. Returns nonzero if the ship died, so we can report to the game engine a game over.
-        if (ship.update(movePoint, elapsedTime, fireProjectile, asteroids) != 0) {
+        if (ship.update(movePoint, elapsedTime, fireProjectile, regularAsteroids, growingAsteroids,
+                octeroidAsteroids) != 0) {
             return GAME_STATUS.GAME_OVER;
         }
 
@@ -332,7 +369,7 @@ public class AsteroidsGame {
         // Update projectiles, keeping track of the ones that need to be removed.
         ArrayList<Projectile> toBeRemoved = new ArrayList<>();
         for (Projectile projectile : projectiles) {
-            if (projectile.update(elapsedTime, asteroids) != 0) {
+            if (projectile.update(elapsedTime, regularAsteroids, growingAsteroids, octeroidAsteroids) != 0) {
                 toBeRemoved.add(projectile);
             }
         }
@@ -342,12 +379,34 @@ public class AsteroidsGame {
             projectiles.remove(projectile);
         }
 
-        // Update the asteroids. update returns nonzero if it has been destroyed.
+        // Update the asteroids.
+        // TODO: return GAME_STATUS.NEW_LEVEL when all asteroids are destroyed.
+        updateAsteroids(elapsedTime);
+
+        return GAME_STATUS.NORMAL;
+    }
+
+    /**
+     * Updates the asteroids, including collision detecting, splitting, and removing properly.
+     * @param elapsedTime How much time since the last update.
+     */
+    private static void updateAsteroids(double elapsedTime) {
+        // Update the regular asteroids. update returns nonzero if it has been destroyed.
         ArrayList<Asteroid> asteroidsToBeRemoved = new ArrayList<>();
-        for (Asteroid asteroid : asteroids) {
+        ArrayList<Asteroid> asteroidsToAdd = new ArrayList<>();
+        for (Asteroid asteroid : regularAsteroids) {
             if (asteroid != null) {
                 if (asteroid.update(elapsedTime) != 0) {
-                    // TODO: split the asteroid. For now, I just want to test destroying it.
+                    if (asteroid.getNumTimesSplit() <= Asteroid.MAX_TIMES_SPLIT) {
+                        // Split the asteroid.
+                        for (int i = 0; i < Asteroid.NUM_SPLIT_ASTEROIDS; i++) {
+                            asteroidsToAdd.add(new Asteroid(
+                                    asteroid.getType(), asteroid.getNumTimesSplit(), asteroid.getWorldPosition(),
+                                    asteroid.getScale() / Asteroid.NUM_SPLIT_ASTEROIDS
+                            ));
+                        }
+                    }
+                    // Add the asteroid to the list to be removed.
                     asteroidsToBeRemoved.add(asteroid);
                 }
             }
@@ -355,10 +414,75 @@ public class AsteroidsGame {
 
         // Remove any asteroids that have been destroyed. This erases it.
         for (Asteroid asteroid : asteroidsToBeRemoved) {
-            asteroids.remove(asteroid);
+            regularAsteroids.remove(asteroid);
         }
 
-        return GAME_STATUS.NORMAL;
+        // Add any new asteroids.
+        for (Asteroid asteroid : asteroidsToAdd) {
+            regularAsteroids.add(asteroid);
+        }
+
+        // Update the growing asteroids. update returns nonzero if it has been destroyed.
+        ArrayList<GrowingAsteroid> growingAsteroidsToBeRemoved = new ArrayList<>();
+        ArrayList<GrowingAsteroid> growingAsteroidsToAdd = new ArrayList<>();
+        for (GrowingAsteroid asteroid : growingAsteroids) {
+            if (asteroid != null) {
+                if (asteroid.update(elapsedTime) != 0) {
+                    if (asteroid.getNumTimesSplit() <= GrowingAsteroid.MAX_TIMES_SPLIT) {
+                        // Split the asteroid.
+                        for (int i = 0; i < GrowingAsteroid.NUM_SPLIT_ASTEROIDS; i++) {
+                            growingAsteroidsToAdd.add(new GrowingAsteroid(
+                                    asteroid.getType(), asteroid.getNumTimesSplit(), asteroid.getWorldPosition(),
+                                    asteroid.getScale()
+                            ));
+                        }
+                    }
+                    // Add the asteroid to the list to be removed.
+                    growingAsteroidsToBeRemoved.add(asteroid);
+                }
+            }
+        }
+
+        // Remove any asteroids that have been destroyed. This erases it.
+        for (GrowingAsteroid asteroid : growingAsteroidsToBeRemoved) {
+            growingAsteroids.remove(asteroid);
+        }
+
+        // Add any new asteroids.
+        for (GrowingAsteroid asteroid : growingAsteroidsToAdd) {
+            growingAsteroids.add(asteroid);
+        }
+
+        // Update the octeroid asteroids. update returns nonzero if it has been destroyed.
+        ArrayList<Octeroid> octeroidsToBeRemoved = new ArrayList<>();
+        ArrayList<Octeroid> octeroidsToAdd = new ArrayList<>();
+        for (Octeroid asteroid : octeroidAsteroids) {
+            if (asteroid != null) {
+                if (asteroid.update(elapsedTime) != 0) {
+                    if (asteroid.getNumTimesSplit() <= Octeroid.MAX_TIMES_SPLIT) {
+                        // Split the asteroid.
+                        for (int i = 0; i < Octeroid.NUM_SPLIT_ASTEROIDS; i++) {
+                            octeroidsToAdd.add(new Octeroid(
+                                    asteroid.getType(), asteroid.getNumTimesSplit(), asteroid.getWorldPosition(),
+                                    asteroid.getScale()
+                            ));
+                        }
+                    }
+                    // Add the asteroid to the list to be removed.
+                    octeroidsToBeRemoved.add(asteroid);
+                }
+            }
+        }
+
+        // Remove any asteroids that have been destroyed. This erases it.
+        for (Octeroid asteroid : octeroidsToBeRemoved) {
+            octeroidAsteroids.remove(asteroid);
+        }
+
+        // Add any new asteroids.
+        for (Octeroid octeroid : octeroidsToAdd) {
+            octeroidAsteroids.add(octeroid);
+        }
     }
 
     /**

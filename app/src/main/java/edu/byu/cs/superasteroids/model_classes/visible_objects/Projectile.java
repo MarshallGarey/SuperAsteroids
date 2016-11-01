@@ -36,20 +36,36 @@ public class Projectile extends MovingObject{
     }
 
     /**
-     * Update the position of the missile. TODO: check for collisions.
-     * Return a nonzero status when the missile leaves the level so it will be removed.
+     * Update the position of the missile and check for collision with an asteroid or exiting the level boundaries.
+     * Return a nonzero status when the missile collides with an asteroid or leaves the level so it will be removed.
      * @param elapsedTime Time since the last update.
-     * @return -1 if the missile has the left bounds of the level, 0 otherwise.
+     * @return -1 if the missile should be removed, 0 otherwise.
      */
-    public int update(double elapsedTime, HashSet<Asteroid> asteroids) {
+    public int update(double elapsedTime, HashSet<Asteroid> regularAsteroids,
+                      HashSet<GrowingAsteroid> growingAsteroids,
+                      HashSet<Octeroid> octeroids) {
 
         // Move the missile
         super.update(speed, direction + DIRECTION_OFFSET, elapsedTime);
 
         // Check if it has collided with an asteroid
-        for (Asteroid asteroid : asteroids) {
+        for (Asteroid asteroid : regularAsteroids) {
             if (this.collisionWith(asteroid.getHitBox())) {
                 asteroid.touch(this);
+                return -1;
+            }
+        }
+
+        for (GrowingAsteroid growingAsteroid : growingAsteroids) {
+            if (this.collisionWith(growingAsteroid.getHitBox())) {
+                growingAsteroid.touch(this);
+                return -1;
+            }
+        }
+
+        for (Octeroid octeroid : octeroids) {
+            if (this.collisionWith(octeroid.getHitBox())) {
+                octeroid.touch(this);
                 return -1;
             }
         }
