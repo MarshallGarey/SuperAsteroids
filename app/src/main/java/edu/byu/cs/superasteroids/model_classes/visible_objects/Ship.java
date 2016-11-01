@@ -18,9 +18,6 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.PowerCore
  */
 public class Ship extends MovingObject {
 
-    private final int MAX_SHIP_HP = 5;
-    public static final float SHIP_SCALE = (float)0.2;
-
     /**
      * The ship's main body.
      */
@@ -48,8 +45,11 @@ public class Ship extends MovingObject {
 
     private int safeCount = 0;              // If 0, the ship will take damage from collisions with asteroids.
     private final int UPDATE_HZ = 60;       // Update happens 60 times per second
-    private final int SAFE_MODE_TIME = 1;   // The ship is safe for 5 seconds
+    private final int SAFE_MODE_TIME = 5;   // The ship is safe for 5 seconds
     private final int SAFE_MODE_COUNT = UPDATE_HZ * SAFE_MODE_TIME;
+
+    private final int MAX_SHIP_HP = 5;
+    public static final float SHIP_SCALE = (float)0.2;
 
     /**
      * Typical constructor - initialize all the data
@@ -152,7 +152,7 @@ public class Ship extends MovingObject {
                     asteroid.touch(this);
                     safeCount = SAFE_MODE_COUNT;
                     MovingObject.playImpactSound();
-//                    this.hp--;
+                    this.hp--;
 
                     // Otherwise, immediately exit the loop so the ship doesn't take damage from multiple asteroids.
                     break;
