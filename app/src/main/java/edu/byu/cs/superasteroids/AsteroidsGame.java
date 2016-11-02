@@ -217,6 +217,9 @@ public class AsteroidsGame {
         // Create an empty list of projectiles so they can be added in later when they're fired.
         projectiles = new HashSet<>();
 
+        // Initialize the mini map
+        miniMap = new MiniMap(levelWidth, levelHeight);
+
         loadContent(ContentManager.getInstance());
     }
 
@@ -249,6 +252,7 @@ public class AsteroidsGame {
                 return asteroidType;
             }
         }
+        // It should never get here.
         return asteroidTypes.get(0); // TODO: maybe it's better to return null
     }
 
@@ -373,10 +377,11 @@ public class AsteroidsGame {
     }
 
     /**
-     * Draws everything on the screen
+     * Draws everything on the screen. The order in which objects are drawn is important - draw objects on the top
+     * layer last and objects on the bottom layer first.
      */
     public static void draw() {
-        // Draw the background FIRST. TODO: scale the background.
+        // Draw the background FIRST.
         background.draw();
 
         // Draw the background images
@@ -408,6 +413,9 @@ public class AsteroidsGame {
         for (Projectile projectile : projectiles) {
             projectile.draw();
         }
+
+        // Draw the minimap on top
+        miniMap.draw(ship, regularAsteroids, growingAsteroids, octeroidAsteroids);
     }
 
     /**

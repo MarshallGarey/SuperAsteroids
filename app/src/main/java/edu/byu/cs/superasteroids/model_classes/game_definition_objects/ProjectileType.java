@@ -32,7 +32,7 @@ public class ProjectileType extends ImageObject {
 
     // Initializes all info about the type of projectile.
     public ProjectileType(String image, int width, int height, String attackSoundFile, int damage) {
-        super(image, width, height, Ship.SHIP_SCALE); // TODO: scale this correctly
+        super(image, width, height, Ship.SHIP_SCALE);
         this.attackSoundFile = attackSoundFile;
         this.damage = damage;
     }

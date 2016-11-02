@@ -44,7 +44,6 @@ public class GrowingAsteroid extends Asteroid {
     }
 
     /**
-     * TODO: call this somewhere
      * Makes the asteroid get bigger by increasing the scale.
      */
     public void grow() {

@@ -107,7 +107,6 @@ public class Ship extends MovingObject {
     /**
      * TODO: apply the speed boost from the power core; also, speed should probably also depend on the distance from
      * the touch point (don't move if you're at or close to the touch point)
-     *
      */
     public int update(PointF movePoint, double elapsedTime, boolean fireProjectile,
                       HashSet<Asteroid> regularAsteroids,
@@ -126,8 +125,7 @@ public class Ship extends MovingObject {
             // The ship can rotate but not move forward if firing a missile.
             if (fireProjectile || (GraphicsUtils.distance(movePoint, worldPosition) < 100)) {
                 speed = 0;
-            }
-            else {
+            } else {
                 speed = engine.getBaseSpeed();
             }
 
@@ -175,7 +173,7 @@ public class Ship extends MovingObject {
     private boolean collisionWithAsteroid(HashSet<Asteroid> regularAsteroids,
                                           HashSet<GrowingAsteroid> growingAsteroids,
                                           HashSet<Octeroid> octeroids
-                                          ) {
+    ) {
         for (Asteroid asteroid : regularAsteroids) {
             if (asteroid.collisionWith(body.getHitBox()) ||
                     asteroid.collisionWith(cannon.getHitBox()) ||
@@ -286,8 +284,7 @@ public class Ship extends MovingObject {
             cannon.draw(alpha);
             engine.draw(alpha);
             extraPart.draw(alpha);
-        }
-        else {
+        } else {
             body.draw();
             cannon.draw();
             engine.draw();

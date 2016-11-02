@@ -24,12 +24,11 @@ public class Background extends VisibleObject {
 
     /**
      * Initialize data.
-     * TODO:??? The size of the background image needs to be scaled by the size of the world:
-     * scaledSize = worldSize / starFieldSize
+     * The size of the background image needs to be scaled by the size of the world.
      *
      * @param backgroundImage The path to the image used for the background
-     * @param worldWidth      The width of the world
-     * @param worldHeight     The height of the world
+     * @param worldWidth      The width of the world. Used for scaling.
+     * @param worldHeight     The height of the world. Used for scaling.
      */
     public Background(String backgroundImage, int worldWidth, int worldHeight) {
         double ww = (double) worldWidth;
@@ -40,7 +39,7 @@ public class Background extends VisibleObject {
     }
 
     /**
-     * Draw the portion of the background
+     * Draw the portion of the background that intersects with the position of the screen in the world.
      */
     public void draw() {
         RectF rect = new RectF(Viewport.getView());

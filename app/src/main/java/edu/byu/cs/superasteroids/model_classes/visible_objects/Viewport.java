@@ -19,7 +19,7 @@ public class Viewport {
     }
 
     /**
-     * TODO: move the viewport to stay centered on the ship, as long as the entire viewport stays within the world
+     * Move the viewport to stay centered on the ship, as long as the entire viewport stays within the world.
      */
     public static void update() {
         PointF shipPosition = AsteroidsGame.getShip().worldPosition;
@@ -39,6 +39,14 @@ public class Viewport {
         moveViewport();
     }
 
+    /**
+     * Determines if moving the viewport to the specified position will keep it in bounds.
+     *
+     * @param position  New center position of the viewport (the ship's position).
+     * @param dimension Width or height of the screen.
+     * @param maxValue  Maximum value (width or height) of the world.
+     * @return True if the viewport will be in bounds, false otherwise.
+     */
     private static boolean isInBounds(float position, float dimension, float maxValue) {
         return (((position - dimension / 2) > 0) &&
                 position + dimension / 2 < maxValue);

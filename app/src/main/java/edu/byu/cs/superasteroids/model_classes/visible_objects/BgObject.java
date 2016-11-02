@@ -19,7 +19,6 @@ public class BgObject extends ImageObject {
         // Update the hitbox (or bounding box) immediately - this only ever needs to be done once, because the hit box
         // is used for detecting when the object is inside the viewport. Do this now so it doesn't need to be done
         // every iteration of the game engine inside update.
-        // TODO: I don't think I even have a width or height yet.
         this.updateHitBox();
     }
 

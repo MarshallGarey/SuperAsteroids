@@ -11,7 +11,6 @@ import edu.byu.cs.superasteroids.content.ContentManager;
  * Created by Marshall Garey
  * This class contains information and methods common to all moving objects. Moving objects are
  * things that move around the screen, such as projectiles, asteroids, and the ship.
- * TODO: load the impact sound once and play the impact sound when objects collide
  */
 public class MovingObject extends VisibleObject {
 
