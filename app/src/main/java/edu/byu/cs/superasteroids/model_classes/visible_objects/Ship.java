@@ -104,7 +104,7 @@ public class Ship extends MovingObject {
         setDirection(0.0);
     }
 
-    /*
+    /**
      * TODO: apply the speed boost from the power core; also, speed should probably also depend on the distance from
      * the touch point (don't move if you're at or close to the touch point)
      *
@@ -205,7 +205,7 @@ public class Ship extends MovingObject {
         return false;
     }
 
-    /*
+    /**
      * Returns the angle the ship needs to be (in radians)
      */
     private float calculateAngleInRadians(PointF movePoint) {
@@ -272,11 +272,20 @@ public class Ship extends MovingObject {
             return;
         }
 
-        // Call draw individually on each part of the ship
-        body.draw();
-        cannon.draw();
-        engine.draw();
-        extraPart.draw();
+        // Call draw individually on each part of the ship. Make the ship more transparent if it is safe.
+        if (safeCount != 0) {
+            int alpha = OPAQUE / 2;
+            body.draw(alpha);
+            cannon.draw(alpha);
+            engine.draw(alpha);
+            extraPart.draw(alpha);
+        }
+        else {
+            body.draw();
+            cannon.draw();
+            engine.draw();
+            extraPart.draw();
+        }
     }
 
     /**

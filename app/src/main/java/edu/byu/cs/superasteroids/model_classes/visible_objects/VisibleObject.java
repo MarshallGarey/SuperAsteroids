@@ -15,8 +15,8 @@ import edu.byu.cs.superasteroids.drawing.DrawingHelper;
 public class VisibleObject {
 
     // Constants:
-    private final int OPAQUE = 255;
-    private final int TRANSPARENT = 0;
+    protected final int OPAQUE = 255;
+    protected final int TRANSPARENT = 0;
     protected final int IMAGE_NOT_LOADED = -1;
 
     /**
@@ -81,7 +81,7 @@ public class VisibleObject {
     public void draw() {
         // Test if the viewport intersects with the object, then translate the world coordinates to screen
         // coordinates, then draw.
-        if (RectF.intersects(Viewport.getView(), this.getHitBox())) {
+        if (RectF.intersects(Viewport.getView(), this.hitBox)) {
             PointF pointf = translateToScreenCoordinates();
             DrawingHelper.drawImage(
                     imageId,
@@ -90,13 +90,30 @@ public class VisibleObject {
                     (float) Math.toDegrees((double) direction),
                     scale, scale, OPAQUE);
 
-            // FOR DEBUGGING: DRAW THE HIT BOX
-//            Rect rect = new Rect();
-//            rect.left = (int)(pointf.x - scale * width / 2);
-//            rect.right = (int)(pointf.x + scale * width / 2);
-//            rect.top = (int)(pointf.y - scale * width / 2);
-//            rect.bottom = (int)(pointf.y + scale * width / 2);
-//            DrawingHelper.drawRectangle(rect, Color.RED, 255);
+            // FOR DEBUGGING: DRAW THE HIT BOX.
+            Rect rect = new Rect();
+            rect.left = (int) (pointf.x - scale * width / 2);
+            rect.right = (int) (pointf.x + scale * width / 2);
+            rect.top = (int) (pointf.y - scale * width / 2);
+            rect.bottom = (int) (pointf.y + scale * width / 2);
+            DrawingHelper.drawRectangle(rect, Color.RED, OPAQUE);
+        }
+    }
+
+    /**
+     * Same as the default draw method, except that the transparency is specified.
+     *
+     * @param alpha The transparency.
+     */
+    public void draw(int alpha) {
+        if (RectF.intersects(Viewport.getView(), this.getHitBox())) {
+            PointF pointf = translateToScreenCoordinates();
+            DrawingHelper.drawImage(
+                    imageId,
+                    pointf.x,
+                    pointf.y,
+                    (float) Math.toDegrees((double) direction),
+                    scale, scale, alpha);
         }
     }
 
@@ -124,6 +141,7 @@ public class VisibleObject {
 
     /**
      * Draws the object, assuming that its (x,y) world coordinates are the same as screen coordinates.
+     * Used for debugging, not in the regular program.
      */
     public void drawAbsolutePosition() {
         DrawingHelper.drawImage(imageId, worldPosition.x, worldPosition.y, 0, scale, scale, OPAQUE);
@@ -149,6 +167,13 @@ public class VisibleObject {
         worldPosition = moveObjectResult.getNewObjPosition();
     }
 
+    /**
+     * Detect if the object is out of bounds.
+     *
+     * @param worldWidth  Width of the level
+     * @param worldHeight Height of the level.
+     * @return True if the object is out of bounds
+     */
     public boolean outOfBounds(int worldWidth, int worldHeight) {
         return (hitBox.left < 0 || hitBox.right > worldWidth || hitBox.top < 0 || hitBox.bottom > worldHeight);
     }
@@ -240,9 +265,5 @@ public class VisibleObject {
 
     public RectF getHitBox() {
         return hitBox;
-    }
-
-    public void setHitBox(RectF hitBox) {
-        this.hitBox = hitBox;
     }
 }

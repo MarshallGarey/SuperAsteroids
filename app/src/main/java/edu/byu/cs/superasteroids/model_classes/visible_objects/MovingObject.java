@@ -30,7 +30,7 @@ public class MovingObject extends VisibleObject {
     /**
      * The path to the impact sound
      */
-    private static final String impactSound = "sounds/impact.wav";
+    private static final String impactSound = "sounds/crash3.mp3";
     private static int impactSoundId = -1;
     private static ContentManager contentManager;
 

@@ -38,8 +38,10 @@ public class Asteroid extends MovingObject {
         numTimesSplit = 0;
 
         // Initialize and scale the height and width before position
-        height = (int) (type.height * scale);
-        width = (int) (type.width * scale);
+//        height = (int) (type.height * scale);
+//        width = (int) (type.width * scale);
+        height = type.height;
+        width = type.width;
 
         // Initialize to a random position
         worldPosition = initRandomPosition(levelWidth, levelHeight);
@@ -62,6 +64,10 @@ public class Asteroid extends MovingObject {
         this.hp = STARTING_HP / (2 * numTimesSplit);
         worldPosition = parentPoint;
         scale = newScale;
+//        height = (int) (type.height * scale);
+//        width = (int) (type.width * scale);
+        height = type.height;
+        width = type.width;
         init(type);
     }
 

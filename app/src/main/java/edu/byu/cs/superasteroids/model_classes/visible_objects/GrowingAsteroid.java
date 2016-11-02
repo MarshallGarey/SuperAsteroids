@@ -11,8 +11,7 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.AsteroidT
 public class GrowingAsteroid extends Asteroid {
 
     /**
-     * The maximum size of this type of asteroid.
-     * TODO: Change this to MAX_SCALE and set it to a reasonable number.
+     * The maximum scale of this type of asteroid.
      */
     private final float MAX_SCALE = 2;
     private final int GROW_COUNT = 180; // (this/60) seconds between growing
@@ -53,8 +52,8 @@ public class GrowingAsteroid extends Asteroid {
             return;
         }
         scale += 0.1;
-        width = (int) (width * scale);
-        height = (int) (height * scale);
+//        width = (int) (width * scale);
+//        height = (int) (height * scale);
         updateHitBox();
     }
 }
