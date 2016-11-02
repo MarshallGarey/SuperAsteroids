@@ -124,8 +124,8 @@ public class VisibleObject {
      */
     public void drawPartial(RectF imagePortion) {
         DrawingHelper.drawImage(imageId,
-                new Rect((int) imagePortion.left, (int) imagePortion.top,
-                        (int) imagePortion.right, (int) imagePortion.bottom),
+                new Rect((int) (imagePortion.left), (int) (imagePortion.top),
+                        (int) (imagePortion.right), (int) (imagePortion.bottom)),
                 null);
     }
 

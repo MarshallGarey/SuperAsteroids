@@ -1,5 +1,7 @@
 package edu.byu.cs.superasteroids.model_classes.visible_objects;
 
+import android.graphics.RectF;
+
 import edu.byu.cs.superasteroids.content.ContentManager;
 import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ImageObject;
 
@@ -10,10 +12,10 @@ import edu.byu.cs.superasteroids.model_classes.game_definition_objects.ImageObje
  */
 public class Background extends VisibleObject {
 
-    private final int BGIMAGE_WIDTH = 2048;
-    private final int BGIMAGE_HEIGHT = 2048;
-    private float widthScale;
-    private float heightScale;
+    private final double BGIMAGE_WIDTH = 2048.0;
+    private final double BGIMAGE_HEIGHT = 2048.0;
+    private double widthScale;
+    private double heightScale;
 
     /**
      * The background is an image that needs to be drawn.
@@ -30,16 +32,23 @@ public class Background extends VisibleObject {
      * @param worldHeight     The height of the world
      */
     public Background(String backgroundImage, int worldWidth, int worldHeight) {
-        widthScale = worldWidth / BGIMAGE_WIDTH;
-        heightScale = worldHeight / BGIMAGE_HEIGHT;
-        this.backgroundImage = new ImageObject(backgroundImage, BGIMAGE_WIDTH, BGIMAGE_HEIGHT, 1);
+        double ww = (double) worldWidth;
+        double wh = (double) worldHeight;
+        widthScale = BGIMAGE_WIDTH / ww;
+        heightScale = BGIMAGE_HEIGHT / wh;
+        this.backgroundImage = new ImageObject(backgroundImage, (int)BGIMAGE_WIDTH, (int)BGIMAGE_HEIGHT, 1);
     }
 
     /**
      * Draw the portion of the background
      */
     public void draw() {
-        backgroundImage.drawPartial(Viewport.getView());
+        RectF rect = new RectF(Viewport.getView());
+        rect.left *= widthScale;
+        rect.right *= widthScale;
+        rect.top *= heightScale;
+        rect.bottom *= heightScale;
+        backgroundImage.drawPartial(rect);
     }
 
     public void loadContent(ContentManager contentManager) {

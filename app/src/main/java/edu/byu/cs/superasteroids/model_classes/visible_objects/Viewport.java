@@ -47,14 +47,15 @@ public class Viewport {
     /**
      * Initialize the viewport.
      * Set the rectangle to the size of the screen in the center of the world.
-     * @param levelWidth    The width of the world
-     * @param levelHeight   The height of the world
+     *
+     * @param levelWidth  The width of the world
+     * @param levelHeight The height of the world
      */
     public static void init(int levelWidth, int levelHeight) {
         // Place the viewport in the center of the world
         float centerX = levelWidth / 2;
         float centerY = levelHeight / 2;
-        currentViewportPosition  = new PointF(centerX, centerY);
+        currentViewportPosition = new PointF(centerX, centerY);
         moveViewport();
     }
 
@@ -75,6 +76,7 @@ public class Viewport {
 
     /**
      * object world position = object screen postion + viewport world position
+     *
      * @param screenCoordinates The screen coordinates to convert to world coordinates
      * @return The world coordinates of the passed point, or null if the passed point is null
      */
