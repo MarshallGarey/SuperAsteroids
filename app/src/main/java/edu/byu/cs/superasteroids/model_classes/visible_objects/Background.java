@@ -44,7 +44,6 @@ public class Background extends VisibleObject {
 
     public void loadContent(ContentManager contentManager) {
         backgroundImage.loadImage(contentManager);
-//        backgroundImage.setImageId(contentManager.loadImage(backgroundImage.getImageFile()));
     }
 
     // ============================================================== //
@@ -53,9 +52,5 @@ public class Background extends VisibleObject {
 
     public ImageObject getBackgroundImage() {
         return backgroundImage;
-    }
-
-    public void setBackgroundImage(ImageObject backgroundImage) {
-        this.backgroundImage = backgroundImage;
     }
 }

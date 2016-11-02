@@ -47,8 +47,6 @@ public class AsteroidsGame {
      */
     private static ArrayList<AsteroidType> asteroidTypes;
 
-    private static ArrayList<Integer> asteroidTypeIndices;
-
     /**
      * lists of all asteroids in the level
      */
@@ -122,7 +120,7 @@ public class AsteroidsGame {
      * Return value for the update function. This tells the game engine how to proceed.
      */
     public enum GAME_STATUS {
-        GAME_OVER, WON_LEVEL, NORMAL
+        GAME_OVER, WON_LEVEL, NORMAL, END
     }
 
     /**
@@ -184,21 +182,42 @@ public class AsteroidsGame {
         int levelHeight = getLevel(currentLevelNumber).getLevelHeight();
         Viewport.init(levelWidth, levelHeight);
 
+        // Initialize the background to avoid crashing
+        background = new Background(BACKGROUND_IMAGE_FILE, levelWidth, levelHeight);
+
+        // Initialize the list of background objects for the current level.
+        initBgObjects();
+    }
+
+    /**
+     * Initialize the ship, asteroids, etc. at the beginning of the level
+     */
+    public static void initLevel() {
+
+        // Initialize viewport
+        int levelWidth = getLevel(currentLevelNumber).getLevelWidth();
+        int levelHeight = getLevel(currentLevelNumber).getLevelHeight();
+
         // Initialize the background
         background = new Background(BACKGROUND_IMAGE_FILE, levelWidth, levelHeight);
 
         // Initialize the list of background objects for the current level.
         initBgObjects();
 
-        // Since I'm not getting the asteroid types in the same order as I read them in the JSON, I'm reordering them
-        // like this. It's silly but works as a temporary fix. TODO: hopefully do this better
-        asteroidTypeIndices = new ArrayList<>();
-        asteroidTypeIndices.add(2);  // growing
-        asteroidTypeIndices.add(1);  // octeroid
-        asteroidTypeIndices.add(0);  // regular
+        // Initialize the viewport for the current level.
+        Level level = getLevel(currentLevelNumber);
+        Viewport.init(levelWidth, levelHeight);
+
+        // Initialize the ship.
+        ship.init();
+
+        // Initialize the asteroids for the current level.
+        initAsteroids(level);
 
         // Create an empty list of projectiles so they can be added in later when they're fired.
         projectiles = new HashSet<>();
+
+        loadContent(ContentManager.getInstance());
     }
 
     /**
@@ -221,9 +240,22 @@ public class AsteroidsGame {
     }
 
     /**
+     * @param type The type to find.
+     * @return Returns a pointer to an AsteroidType object with the matching type.
+     */
+    private static AsteroidType findAsteroidType(String type) {
+        for (AsteroidType asteroidType : asteroidTypes) {
+            if (asteroidType.getType().equals(type)) {
+                return asteroidType;
+            }
+        }
+        return asteroidTypes.get(0); // TODO: maybe it's better to return null
+    }
+
+    /**
      * Initialize the asteroids in the level.
      * Get the asteroids in the level by getting the level and looking at levelAsteroids. This tells me how many and
-     * the type - well, it's the ID, but use the ID - 1 to index into the AsteroidTypes array to know which type.
+     * the type - well, it's the ID, but use the ID to know which type: 1=regular, 2=growing, 3=octeroid
      * I need to initialize them in random positions, making sure they don't spawn on the ship, and give them random
      * velocities. Make an init function in the Asteroid class.
      */
@@ -231,32 +263,60 @@ public class AsteroidsGame {
         regularAsteroids = new HashSet<>();
         octeroidAsteroids = new HashSet<>();
         growingAsteroids = new HashSet<>();
+
+        // This list contains the asteroid ID (the type) and how many of that type are in the level.
         for (Level.LevelAsteroid levelAsteroid : level.getLevelAsteroids()) {
-            int typeIndex = asteroidTypeIndices.get(levelAsteroid.getAsteroidID() - 1);
-            // Add one asteroid for each
+
+            int id = levelAsteroid.getAsteroidID();
+            AsteroidType asteroidType;
+            // getAsteroidNumber says how many asteroids to add of this type.
             for (int i = levelAsteroid.getAsteroidNumber(); i > 0; --i) {
-                AsteroidType asteroidType = asteroidTypes.get(typeIndex);
-                String typeString = asteroidType.getType();
-                if (typeString.equals("regular")) {
-                    regularAsteroids.add(new Asteroid(
-                            asteroidType, level.getLevelWidth(), level.getLevelHeight()
-                    ));
-                }
-                else if (typeString.equals("octeroid")) {
-                    octeroidAsteroids.add(new Octeroid(
-                            asteroidType, level.getLevelWidth(), level.getLevelHeight()
-                    ));
-                }
-                else if (typeString.equals("growing")) {
-                    growingAsteroids.add(new GrowingAsteroid(
-                            asteroidType, level.getLevelWidth(), level.getLevelHeight()
-                    ));
-                }
-                else {
-                    // TODO: this is bad. Throw an error or something.
+                switch (id) {
+                    case 1:
+                        // Regular
+                        asteroidType = findAsteroidType("regular");
+                        regularAsteroids.add(new Asteroid(
+                                asteroidType, level.getLevelWidth(), level.getLevelHeight()
+                        ));
+                        break;
+                    case 2:
+                        // Growing
+                        asteroidType = findAsteroidType("growing");
+                        growingAsteroids.add(new GrowingAsteroid(
+                                asteroidType, level.getLevelWidth(), level.getLevelHeight()
+                        ));
+                        break;
+                    case 3:
+                        // Octeroid
+                        asteroidType = findAsteroidType("octeroid");
+                        octeroidAsteroids.add(new Octeroid(
+                                asteroidType, level.getLevelWidth(), level.getLevelHeight()
+                        ));
+                        break;
+                    default:
+                        // It should never get here, but add a Regular if it does.
+                        // TODO: throwing an error might be better.
+                        asteroidType = findAsteroidType("regular");
+                        regularAsteroids.add(new Asteroid(
+                                asteroidType, level.getLevelWidth(), level.getLevelHeight()
+                        ));
+                        break;
                 }
             }
         }
+    }
+
+    /**
+     * Return normal if there's another level, or end the game if all the levels have been beaten.
+     */
+    public static GAME_STATUS nextLevel() {
+        currentLevelNumber++;
+        for (Level l : levels) {
+            if (l.getLevelNumber() == currentLevelNumber) {
+                return GAME_STATUS.NORMAL;
+            }
+        }
+        return GAME_STATUS.END;
     }
 
     /**
@@ -282,6 +342,7 @@ public class AsteroidsGame {
             asteroidType.loadImage(contentManager);
         }
 
+        // Load the impact sound
         MovingObject.loadImpactSound(contentManager);
     }
 
@@ -307,6 +368,7 @@ public class AsteroidsGame {
             asteroidType.unloadImage(contentManager);
         }
 
+        // Unload the impact sound
         MovingObject.unloadImpactSound(contentManager);
     }
 
@@ -342,6 +404,7 @@ public class AsteroidsGame {
             growingAsteroid.draw();
         }
 
+        // Draw the projectiles
         for (Projectile projectile : projectiles) {
             projectile.draw();
         }
@@ -380,9 +443,9 @@ public class AsteroidsGame {
         }
 
         // Update the asteroids.
-        // TODO: return GAME_STATUS.NEW_LEVEL when all asteroids are destroyed.
         updateAsteroids(elapsedTime);
 
+        // Tell the controller when all asteroids are destroyed for a transition to the next level.
         if (allAsteroidsAreDestroyed()) {
             return GAME_STATUS.WON_LEVEL;
         }
@@ -401,6 +464,7 @@ public class AsteroidsGame {
 
     /**
      * Updates the asteroids, including collision detecting, splitting, and removing properly.
+     *
      * @param elapsedTime How much time since the last update.
      */
     private static void updateAsteroids(double elapsedTime) {
@@ -496,21 +560,6 @@ public class AsteroidsGame {
         for (Octeroid octeroid : octeroidsToAdd) {
             octeroidAsteroids.add(octeroid);
         }
-    }
-
-    /**
-     * Initialize the ship, asteroids, etc. at the beginning of the level
-     */
-    public static void initLevel() {
-        // Initialize the viewport for the current level.
-        Level level = getLevel(currentLevelNumber);
-        Viewport.init(level.getLevelWidth(), level.getLevelHeight());
-
-        // Initialize the ship.
-        ship.init();
-
-        // Initialize the asteroids for the current level.
-        initAsteroids(level);
     }
 
     /**

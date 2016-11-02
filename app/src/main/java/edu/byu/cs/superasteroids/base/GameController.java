@@ -61,6 +61,8 @@ public class GameController implements IGameDelegate, IController {
     @Override
     public void update(double elapsedTime) {
 
+        AsteroidsGame.GAME_STATUS status;
+
         /**
          * A simple state machine.
          */
@@ -79,17 +81,27 @@ public class GameController implements IGameDelegate, IController {
                 // stored as world coordinates.
                 // The return value of update tells us whether to transition to a new level, end the game, or just
                 // continue normal execution.
-                AsteroidsGame.GAME_STATUS status = AsteroidsGame.update(
+                status = AsteroidsGame.update(
                         Viewport.screenToWorldCoordinates(InputManager.movePoint),
                         elapsedTime,
                         InputManager.firePressed);
                 if (status == AsteroidsGame.GAME_STATUS.GAME_OVER) {
                     state = State_e.STATE_GAME_OVER;
                 }
+                else if (status == AsteroidsGame.GAME_STATUS.WON_LEVEL) {
+                    state = State_e.STATE_NEW_LEVEL;
+                }
                 break;
 
-            // New level, need to reload and do things
+            // New level, need to reload data and transition back to regular game play.
             case STATE_NEW_LEVEL:
+                status = AsteroidsGame.nextLevel();
+                if (status == AsteroidsGame.GAME_STATUS.NORMAL) {
+                    state = State_e.STATE_START_LEVEL;
+                }
+                else if (status == AsteroidsGame.GAME_STATUS.END) {
+                    state = State_e.STATE_END;
+                }
                 break;
 
             // Last level won, congratulate the player and quit
@@ -134,6 +146,8 @@ public class GameController implements IGameDelegate, IController {
     @Override
     public void draw() {
         // Ask AsteroidsGame to draw - it will call draw on each object
-        AsteroidsGame.draw();
+        if (state == State_e.STATE_RUN) {
+            AsteroidsGame.draw();
+        }
     }
 }
