@@ -124,7 +124,14 @@ public class Ship extends MovingObject {
             direction = calculateAngleInRadians(movePoint);
 
             // The ship can rotate but not move forward if firing a missile.
-            speed = fireProjectile ? 0 : engine.getBaseSpeed(); //GraphicsUtils.distance(movePoint,worldPosition);
+            if (fireProjectile || (GraphicsUtils.distance(movePoint, worldPosition) < 150)) {
+                speed = 0;
+            }
+            else {
+                speed = engine.getBaseSpeed();
+            }
+
+//            speed = fireProjectile ? 0 : engine.getBaseSpeed(); //GraphicsUtils.distance(movePoint,worldPosition);
         } else {
             speed = 0;
         }

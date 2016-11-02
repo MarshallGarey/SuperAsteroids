@@ -16,6 +16,7 @@ public class GameController implements IGameDelegate, IController {
 
     private IView view = null;
     private State_e state;
+    private GameActivity gameActivity = null;
 
     private enum State_e {
         STATE_START_LEVEL,
@@ -25,8 +26,9 @@ public class GameController implements IGameDelegate, IController {
         STATE_GAME_OVER
     }
 
-    public GameController() {
+    public GameController(GameActivity gameActivity) {
         state = State_e.STATE_START_LEVEL;
+        this.gameActivity = gameActivity;
     }
 
     /**

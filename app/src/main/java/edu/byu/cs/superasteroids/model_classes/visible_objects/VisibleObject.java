@@ -91,12 +91,12 @@ public class VisibleObject {
                     scale, scale, OPAQUE);
 
             // FOR DEBUGGING: DRAW THE HIT BOX.
-            Rect rect = new Rect();
-            rect.left = (int) (pointf.x - scale * width / 2);
-            rect.right = (int) (pointf.x + scale * width / 2);
-            rect.top = (int) (pointf.y - scale * width / 2);
-            rect.bottom = (int) (pointf.y + scale * width / 2);
-            DrawingHelper.drawRectangle(rect, Color.RED, OPAQUE);
+//            Rect rect = new Rect();
+//            rect.left = (int) (pointf.x - scale * width / 2);
+//            rect.right = (int) (pointf.x + scale * width / 2);
+//            rect.top = (int) (pointf.y - scale * width / 2);
+//            rect.bottom = (int) (pointf.y + scale * width / 2);
+//            DrawingHelper.drawRectangle(rect, Color.RED, OPAQUE);
         }
     }
 

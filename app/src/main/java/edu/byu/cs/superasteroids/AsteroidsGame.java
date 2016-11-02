@@ -383,7 +383,20 @@ public class AsteroidsGame {
         // TODO: return GAME_STATUS.NEW_LEVEL when all asteroids are destroyed.
         updateAsteroids(elapsedTime);
 
+        if (allAsteroidsAreDestroyed()) {
+            return GAME_STATUS.WON_LEVEL;
+        }
+
         return GAME_STATUS.NORMAL;
+    }
+
+    /**
+     * @return True if all asteroids are destroyed, false otherwise.
+     */
+    private static boolean allAsteroidsAreDestroyed() {
+        return regularAsteroids.size() == 0 &&
+                octeroidAsteroids.size() == 0 &&
+                growingAsteroids.size() == 0;
     }
 
     /**
